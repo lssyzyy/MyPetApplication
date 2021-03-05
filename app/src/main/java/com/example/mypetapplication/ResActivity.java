@@ -26,6 +26,7 @@ public class ResActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_res);
 
+
         editText1 = findViewById(R.id.Ed1);
         editText2 = findViewById(R.id.ED2);
         editText3 = findViewById(R.id.ED3);
@@ -41,6 +42,7 @@ public class ResActivity extends AppCompatActivity {
                     Toast.makeText(ResActivity.this,"注册成功",Toast.LENGTH_SHORT).show();
                     Intent intent=new Intent(ResActivity.this,LoginActivity.class);
                     startActivity(intent);
+                    finish();
                 }else if(editText1.getText().toString().length()==0||editText2.getText().toString().length()==0||editText3.getText().toString().length()==0){
                     Toast.makeText(ResActivity.this,"不能为空",Toast.LENGTH_SHORT).show();
                 }else{

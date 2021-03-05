@@ -7,11 +7,10 @@
     android:orientation="vertical"
     tools:context=".PetDetailinfoActivity">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/beautiful_linearlayout_border"
-        android:orientation="horizontal">
+        android:background="@drawable/beautiful_linearlayout_border">
 
         <Button
             android:id="@+id/pet_detail_back"
@@ -26,12 +25,11 @@
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="104dp"
-            android:layout_marginTop="14dp"
+            android:layout_centerInParent="true"
             android:text="详细信息"
             android:textColor="#000000"
             android:textSize="25dp" />
-    </LinearLayout>
+    </RelativeLayout>
 
     <ScrollView
         android:layout_width="match_parent"

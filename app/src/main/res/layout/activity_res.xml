@@ -4,11 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/beautiful_linearlayout_border"
-        android:orientation="horizontal">
+        android:background="@drawable/beautiful_linearlayout_border">
 
         <Button
             android:id="@+id/set_back"
@@ -23,12 +22,11 @@
             android:id="@+id/TX"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="124dp"
-            android:layout_gravity="center"
+            android:layout_centerInParent="true"
             android:text="注册"
             android:textColor="#000000"
             android:textSize="25dp" />
-    </LinearLayout>
+    </RelativeLayout>
     <LinearLayout
         android:layout_marginTop="100dp"
         android:layout_marginLeft="25dp"

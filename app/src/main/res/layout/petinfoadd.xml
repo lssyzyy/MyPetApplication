@@ -10,12 +10,11 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/pet_info_add_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/beautiful_linearlayout_border"
-            android:orientation="horizontal">
+            android:background="@drawable/beautiful_linearlayout_border">
 
             <Button
                 android:id="@+id/pet_add_back"
@@ -30,13 +29,12 @@
                 android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="100dp"
-                android:layout_marginTop="14dp"
+                android:layout_centerInParent="true"
                 android:text="我要发布"
                 android:textColor="#000000"
                 android:textSize="25dp" />
 
-        </LinearLayout>
+        </RelativeLayout>
 
         <ScrollView
             android:layout_width="match_parent"

@@ -14,7 +14,7 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ViewPagerActivity"
+            android:name=".SplashActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -43,6 +43,9 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".PetListAdd"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".PetBaikeDetailinfoActivity"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
 

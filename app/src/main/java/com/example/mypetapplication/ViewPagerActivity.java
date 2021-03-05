@@ -35,6 +35,7 @@ public class ViewPagerActivity extends AppCompatActivity implements ViewPager.On
 
     public void in(View v){
         Intent intent=new Intent(ViewPagerActivity.this,LoginActivity.class);
+        finish();
         startActivity(intent);
     }
 

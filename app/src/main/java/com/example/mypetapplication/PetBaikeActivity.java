@@ -10,6 +10,9 @@ import android.os.Message;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ListView;
+import android.widget.SearchView;
+import android.widget.TabHost;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -22,12 +25,34 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class PetBaikeActivity extends AppCompatActivity implements ReFlash.ReflashListener {
+public class PetBaikeActivity extends AppCompatActivity {
 
     private  final int SHOW_PETDATA = 0;
-    private PetBaikeAdapter adpter;
-    private List<BeanPetBaike> list;
-    private ReFlash reFlashListView;
+    private PetBaikeAdapter adapter;
+    private PetBaikeDetailAdapter adapterbaike;
+    private List<BeanPetBaike> list=new ArrayList<>();
+    private List<BeanPetBaikeDetail> list2=new ArrayList<>();
+    private ListView reFlashListView;
+    private Button pet_baike_dog,pet_baike_cat,pet_baike_paxing,pet_baike_little,pet_baike_watter;
+    private SearchView pet_baike_search;
+    String type="0";
+    public static final String PET_IMG = "pet_baike_detail_img";
+    public static final String PET_NAME = "pet_baike_detail_name";
+    public static final String PET_ENGNAME = "pet_baike_detail_engname";
+    public static final String PET_CHARACTERS = "pet_baike_detail_characters";
+    public static final String PET_NATION = "pet_baike_detail_nation";
+    public static final String PET_EASYOFDISEASE = "pet_baike_detail_easyOfDisease";
+    public static final String PET_LIFE = "pet_baike_detail_life";
+    public static final String PET_PRICE = "pet_baike_detail_price";
+    public static final String PET_FEATURE = "pet_baike_detail_feature";
+    public static final String PET_CHARACTERFEATURE = "pet_baike_detail_characterFeature";
+    public static final String PET_CAREKNOWLEDGE = "pet_baike_detail_careKnowledge";
+    public static final String PET_FEEDPOINTS = "pet_baike_detail_feedPoints";
+    ArrayList<String> petbaikename=new ArrayList<String>();
+    ArrayList<String> petbaikeengname=new ArrayList<String>();
+    ArrayList<String> petbaikeimg=new ArrayList<String>();
+    ArrayList<String> petbaikeprice=new ArrayList<String>();
+    Handler myhandler=new Handler();
 
     private Handler mHandler = new Handler(){
         @Override
@@ -36,6 +61,7 @@ public class PetBaikeActivity extends AppCompatActivity implements ReFlash.Refla
             switch (msg.what){
                 case  SHOW_PETDATA:
                     showList();
+                    showList2();
                     break;
                 default:
                     break;
@@ -50,7 +76,7 @@ public class PetBaikeActivity extends AppCompatActivity implements ReFlash.Refla
                 try {
 
                     OkHttpClient client = new OkHttpClient();
-                    Request request = new Request.Builder().url("http://api.tianapi.com/txapi/pet/index?key=3c66023c430ded049c9a35ec27aeaa56&type=1&page=1&num=14").build();
+                    Request request = new Request.Builder().url("http://api.tianapi.com/txapi/pet/index?key=3c66023c430ded049c9a35ec27aeaa56&type="+type+"&page=1&num=15").build();
                     Response response = client.newCall(request).execute();
                     String responseData = response.body().string();
 
@@ -80,20 +106,6 @@ public class PetBaikeActivity extends AppCompatActivity implements ReFlash.Refla
 
         find();
         loadPetData();
-        Toast.makeText(PetBaikeActivity.this,"宠物百科",Toast.LENGTH_SHORT).show();
-        final ProgressDialog wait = new ProgressDialog(PetBaikeActivity.this);
-        wait.setMessage("加载中....");
-        wait.setIndeterminate(true);
-        wait.setCancelable(true);
-        wait.show();
-        wait.setCanceledOnTouchOutside(false);
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                wait.dismiss();
-            }
-        },1000);
-
         Button btn2 = findViewById(R.id.petbaike_back);
         btn2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,45 +113,185 @@ public class PetBaikeActivity extends AppCompatActivity implements ReFlash.Refla
                 PetBaikeActivity.this.finish();
             }
         });
-    }
-
-    @Override
-    public void onReflash() {
-        mHandler.postDelayed(new Runnable() {
+        adapter=new PetBaikeAdapter(this,R.layout.activity_pet_baike_item,list);
+        reFlashListView = findViewById(R.id.listv);
+        reFlashListView.setAdapter(adapter);
+        reFlashListView.setTextFilterEnabled(true);
+        reFlashListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void run() {
-                loadPetData();
-                reFlashListView.reflashComplete();
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                BeanPetBaikeDetail petl = list2.get(i);
+                Toast.makeText(PetBaikeActivity.this,"选择"+petl.getName()+petl.getEngname(), Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(PetBaikeActivity.this, PetBaikeDetailinfoActivity.class);
+                String pet_img = petl.getImg();
+                String pet_name = petl.getName();
+                String pet_engname = petl.getEngname();
+                String pet_characters = petl.getCharacters();
+                String pet_nation = petl.getNation();
+                String pet_easyOfDisease = petl.getEasyOfDisease();
+                String pet_life = petl.getLife();
+                String pet_price = petl.getPrice();
+                String pet_feature = petl.getFeature();
+                String pet_characterFeature = petl.getCharacterFeature();
+                String pet_careKnowledge = petl.getCareKnowledge();
+                String pet_feedPoints = petl.getFeedPoints();
+                intent.putExtra(PET_IMG, pet_img);
+                intent.putExtra(PET_NAME, pet_name);
+                intent.putExtra(PET_ENGNAME, pet_engname);
+                intent.putExtra(PET_CHARACTERS, pet_characters);
+                intent.putExtra(PET_NATION, pet_nation);
+                intent.putExtra(PET_EASYOFDISEASE, pet_easyOfDisease);
+                intent.putExtra(PET_LIFE, pet_life);
+                intent.putExtra(PET_PRICE, pet_price);
+                intent.putExtra(PET_FEATURE, pet_feature);
+                intent.putExtra(PET_CHARACTERFEATURE, pet_characterFeature);
+                intent.putExtra(PET_CAREKNOWLEDGE, pet_careKnowledge);
+                intent.putExtra(PET_FEEDPOINTS, pet_feedPoints);
+                startActivity(intent);
             }
-        },2000);
-    }
-    private void showList() {
-        if (adpter==null){
-            adpter = new PetBaikeAdapter(PetBaikeActivity.this,0,list);
+        });
+        pet_baike_dog=findViewById(R.id.pet_baike_dog);
+        pet_baike_cat=findViewById(R.id.pet_baike_cat);
+        pet_baike_paxing=findViewById(R.id.pet_baike_paxing);
+        pet_baike_little=findViewById(R.id.pet_baike_little);
+        pet_baike_watter=findViewById(R.id.pet_baike_watter);
+        pet_baike_cat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cleanlist();
+                type="0";
+                loadPetData();
+            }
+        });
+        pet_baike_dog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cleanlist();
+                type="1";
+                loadPetData();
+            }
+        });
+        pet_baike_paxing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cleanlist();
+                type="2";
+                loadPetData();
+            }
+        });
+        pet_baike_little.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cleanlist();
+                type="3";
+                loadPetData();
+            }
+        });
+        pet_baike_watter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cleanlist();
+                type="4";
+                loadPetData();
+            }
+        });
+        //搜索功能
+        pet_baike_search=findViewById(R.id.pet_baike_search);
+        pet_baike_search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
 
-            reFlashListView.setInterface(PetBaikeActivity.this);
-            reFlashListView.setAdapter(adpter);
+            @Override
+            public boolean onQueryTextChange(final String newText) {
+                myhandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        String data = newText;
+                        list.clear();
+                        PetSearch(list, data);
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+                return false;
+            }
+        });
+    }
+
+    private void showList() {
+        if (adapter==null){
+            adapter = new PetBaikeAdapter(PetBaikeActivity.this,0,list);
+
+            reFlashListView.setAdapter(adapter);
         }else {
-            adpter.onDateChange(list);
+            adapter.onDateChange(list);
+        }
+    }
+    private void showList2() {
+        if (adapterbaike==null){
+            adapterbaike = new PetBaikeDetailAdapter(PetBaikeActivity.this,0,list2);
+
+        }else {
+            adapterbaike.onDateChange(list2);
         }
     }
     private void getjson(String jsonData){
         try{
             JSONObject jsonObject = new JSONObject(jsonData);
             JSONArray jsonArray = jsonObject.getJSONArray("newslist");
-            list = new ArrayList<BeanPetBaike>();
 
             for(int i = 0; i<jsonArray.length();i++){
                 JSONObject jsonObject3 = (JSONObject) jsonArray.get(i);
                 String pic = jsonObject3.getString("coverURL");
                 String name = jsonObject3.getString("name");
                 String engname = jsonObject3.getString("engName");
+                String characters = jsonObject3.getString("characters");
+                String nation = jsonObject3.getString("nation");
+                String easyOfDisease = jsonObject3.getString("easyOfDisease");
+                String life = jsonObject3.getString("life");
                 String price = jsonObject3.getString("price");
+                String feature = jsonObject3.getString("feature");
+                String characterFeature = jsonObject3.getString("characterFeature");
+                String careKnowledge = jsonObject3.getString("careKnowledge");
+                String feedPoints = jsonObject3.getString("feedPoints");
                 BeanPetBaike bean = new BeanPetBaike(pic,name,engname,price);
+                BeanPetBaikeDetail bean2 = new BeanPetBaikeDetail(pic,name,engname,characters,nation,easyOfDisease,life,price,feature,characterFeature,careKnowledge,feedPoints);
                 list.add(bean);
+                list2.add(bean2);
             }
         }catch (Exception e){
             e.printStackTrace();
+        }
+    }
+    //清除处理
+    private void cleanlist(){
+        int size=list.size();
+        int size2=list2.size();
+        if(size>0){
+            System.out.println(size);
+            list.removeAll(list);
+            adapter.notifyDataSetChanged();
+            reFlashListView.setAdapter(adapter);
+        }
+        if(size2>0){
+            System.out.println(size);
+            list2.removeAll(list2);
+            adapterbaike.notifyDataSetChanged();
+        }
+    }
+    //搜索功能
+    private void PetSearch(List<BeanPetBaike> datas,String data){
+        int length=petbaikename.size();
+        for(int i=0;i<length;i++){
+            if(petbaikename.get(i).contains(data)||petbaikeengname.get(i).contains(data)){
+                BeanPetBaike item=new BeanPetBaike();
+                item.setName(petbaikename.get(i));
+                item.setEngname(petbaikeengname.get(i));
+                item.setImageView(petbaikeimg.get(i));
+                item.setPrice(petbaikeprice.get(i));
+                datas.add(item);
+            }
         }
     }
 }

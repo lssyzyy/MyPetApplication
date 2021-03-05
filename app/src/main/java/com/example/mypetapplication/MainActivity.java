@@ -1,7 +1,10 @@
 package com.example.mypetapplication;
 
 
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -13,6 +16,7 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -48,6 +52,7 @@ import com.google.android.material.navigation.NavigationView;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
@@ -70,7 +75,6 @@ public class MainActivity extends AppCompatActivity {
     public static final String PET_PRICE = "pet_price";
     public static final String PET_CONTENT = "pet_content";
     private RadioButton checked;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,6 +180,7 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+
     }
 
 
@@ -244,7 +249,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void logout(View v){
-        MainActivity.this.finish();
+        Intent intent=new Intent(MainActivity.this,LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
     //搜索功能
     private void DataSearch(List<BeanPet> datas,String data){
@@ -258,5 +265,38 @@ public class MainActivity extends AppCompatActivity {
                 datas.add(item);
             }
         }
+    }
+
+    //弹出退出对话框
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        // TODO Auto-generated method stub
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                AlertDialog.Builder build=new AlertDialog.Builder(this);
+                build.setTitle("注意")
+                        .setMessage("确定要退出吗？")
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // TODO Auto-generated method stub
+                                dialog.dismiss();
+                                android.os.Process.killProcess(android.os.Process.myPid());  //获取PID
+                                System.exit(0);
+                            }
+                        })
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // TODO Auto-generated method stub
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+                break;
+            default:
+                break;
+        }
+        return false;
     }
 }

@@ -18,6 +18,7 @@ public class PetDetailinfoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pet_detail_info);
 
+
         pet_detail_img=findViewById(R.id.pet_detail_img);
         pet_detail_title=findViewById(R.id.pet_detail_title);
         pet_detail_topic=findViewById(R.id.pet_detail_topic);

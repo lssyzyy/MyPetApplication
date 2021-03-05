@@ -47,6 +47,7 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
                     Intent user=new Intent(LoginActivity.this,MainActivity.class);
                     startActivity(user);
+                    finish();
                     if(rem_pwd.isChecked()){
                         editor.putBoolean("remember_pwd",true);
                         editor.putString("username",name);

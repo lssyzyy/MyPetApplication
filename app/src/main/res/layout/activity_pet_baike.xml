@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PetBaikeActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".PetBaikeActivity">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/beautiful_linearlayout_border"
@@ -27,17 +26,87 @@
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="93dp"
-            android:layout_marginTop="12dp"
+            android:layout_centerInParent="true"
             android:text="宠物百科"
             android:textColor="#000000"
             android:textSize="25sp" />
-    </LinearLayout>
-    <com.example.mypetapplication.ReFlash
-        android:id="@+id/listv"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    </RelativeLayout>
 
-    </com.example.mypetapplication.ReFlash>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <SearchView
+            android:id="@+id/pet_baike_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:iconifiedByDefault="false"
+            android:focusable="false"
+            android:queryHint="输入内容搜索百科..."/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="47dp"
+            android:orientation="horizontal"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="#00000000">
+
+            <Button
+                android:id="@+id/pet_baike_cat"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="3dp"
+                android:layout_weight="1"
+                android:background="@drawable/beautiful_linearlayout_border"
+                android:text="猫科"
+                android:textSize="16dp"/>
+            <Button
+                android:id="@+id/pet_baike_dog"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="3dp"
+                android:layout_weight="1"
+                android:background="@drawable/beautiful_linearlayout_border"
+                android:text="犬科"
+                android:textSize="16dp"/>
+
+            <Button
+                android:id="@+id/pet_baike_paxing"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="3dp"
+                android:layout_weight="1"
+                android:background="@drawable/beautiful_linearlayout_border"
+                android:text="爬行类"
+                android:textSize="15dp"/>
+            <Button
+                android:id="@+id/pet_baike_little"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="3dp"
+                android:layout_weight="1"
+                android:background="@drawable/beautiful_linearlayout_border"
+                android:text="小宠物类"
+                android:textSize="12dp"/>
+            <Button
+                android:id="@+id/pet_baike_watter"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="3dp"
+                android:layout_weight="1"
+                android:background="@drawable/beautiful_linearlayout_border"
+                android:text="水族类"
+                android:textSize="15dp"/>
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/listv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </ListView>
+    </LinearLayout>
 
 </LinearLayout>

@@ -6,6 +6,8 @@ public class BeanPetBaike {
     private String engname;
     private String price;
 
+
+    public BeanPetBaike(){};
     public BeanPetBaike(String imageView, String name, String engname, String price) {
         this.imageView = imageView;
         this.name = name;
