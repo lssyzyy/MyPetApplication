@@ -37,8 +37,8 @@ public class ResActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 db=helper.getWritableDatabase();
-                Instert();
                 if(editText2.getText().toString().equals(editText3.getText().toString())&&editText1.getText().toString().length()!=0&&editText2.getText().toString().length()!=0&&editText3.getText().toString().length()!=0){
+                    Instert();
                     Toast.makeText(ResActivity.this,"注册成功",Toast.LENGTH_SHORT).show();
                     Intent intent=new Intent(ResActivity.this,LoginActivity.class);
                     startActivity(intent);
@@ -57,7 +57,9 @@ public class ResActivity extends AppCompatActivity {
         res_log.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ResActivity.this.finish();
+                Intent intent=new Intent(ResActivity.this,LoginActivity.class);
+                startActivity(intent);
+                finish();
             }
         });
 

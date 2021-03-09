@@ -1,6 +1,7 @@
 package com.example.mypetapplication;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -9,6 +10,7 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 public class Setting extends AppCompatActivity {
     Button btn_re;
@@ -17,15 +19,17 @@ public class Setting extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.setting);
         init();
-        Switch switchComponent = (Switch)findViewById(R.id.night);
-        switchComponent.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        Button switchComponent = findViewById(R.id.night);
+        switchComponent.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if(isChecked){
-                    Toast.makeText(Setting.this, "夜间模式开", Toast.LENGTH_SHORT).show();
-                }else{
-                    Toast.makeText(Setting.this, "夜间模式关", Toast.LENGTH_SHORT).show();
+            public void onClick(View view) {
+                int mode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+                if(mode == Configuration.UI_MODE_NIGHT_YES) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                } else if(mode == Configuration.UI_MODE_NIGHT_NO) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                 }
+                recreate();
             }
         });
 

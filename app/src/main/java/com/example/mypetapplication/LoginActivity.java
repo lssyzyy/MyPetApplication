@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
@@ -13,6 +15,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.mypetapplication.service.SendDateToServer;
+import com.facebook.stetho.Stetho;
 
 public class LoginActivity extends AppCompatActivity {
     private EditText username;
@@ -26,10 +31,26 @@ public class LoginActivity extends AppCompatActivity {
 
     MyUserdataHelper helper;
 
+    Handler handler=new Handler(){
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case SendDateToServer.SEND_SUCCESS:
+                    Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+                    break;
+                case SendDateToServer.SEND_FAIL:
+                    Toast.makeText(LoginActivity.this, "登录失败", Toast.LENGTH_SHORT).show();
+                    break;
+
+                default:
+                    break;
+            }
+        };
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        Stetho.initializeWithDefaults(this);
         pref= PreferenceManager.getDefaultSharedPreferences(this);
         username=findViewById(R.id.Ed1);
         pwd=findViewById(R.id.ED2);
@@ -43,22 +64,27 @@ public class LoginActivity extends AppCompatActivity {
                 String name=username.getText().toString();
                 String pass=pwd.getText().toString();
                 editor=pref.edit();
-                if (login(name,pass)){
-                    Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
-                    Intent user=new Intent(LoginActivity.this,MainActivity.class);
-                    startActivity(user);
-                    finish();
-                    if(rem_pwd.isChecked()){
-                        editor.putBoolean("remember_pwd",true);
-                        editor.putString("username",name);
-                        editor.putString("password",pass);
-                    }else {
-                        editor.clear();
+                if(username.equals("")||pwd.equals("")){
+                    Toast.makeText(LoginActivity.this, "账号或密码不能为空", Toast.LENGTH_LONG).show();
+                }else {
+                    if (login(name,pass)){
+                        new SendDateToServer(handler).SendDataToServer(name,pass);
+                        Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
+                        Intent user=new Intent(LoginActivity.this,MainActivity.class);
+                        startActivity(user);
+                        finish();
+                        if(rem_pwd.isChecked()){
+                            editor.putBoolean("remember_pwd",true);
+                            editor.putString("username",name);
+                            editor.putString("password",pass);
+                        }else {
+                            editor.clear();
+                        }
+                        editor.commit();
                     }
-                    editor.commit();
-                }
-                else {
-                    Toast.makeText(LoginActivity.this,"密码错误",Toast.LENGTH_SHORT).show();
+                    else {
+                        Toast.makeText(LoginActivity.this,"账号或密码错误",Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -67,6 +93,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent=new Intent(LoginActivity.this,ResActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
         boolean isRemeber=pref.getBoolean("remember_pwd",false);
