@@ -172,7 +172,6 @@ public class PetBaikeActivity extends AppCompatActivity {
                 // TODO Auto-generated method stub
                 cleanlist();
                 type=String.valueOf(arg2);
-                Toast.makeText(PetBaikeActivity.this,"选择"+ arg2, Toast.LENGTH_LONG).show();
                 loadPetData();
             }
 
