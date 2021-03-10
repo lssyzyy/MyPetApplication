@@ -9,9 +9,11 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.Toast;
 
@@ -53,6 +55,9 @@ public class PetBaikeActivity extends AppCompatActivity {
     ArrayList<String> petbaikeimg=new ArrayList<String>();
     ArrayList<String> petbaikeprice=new ArrayList<String>();
     Handler myhandler=new Handler();
+    private Spinner spinner;
+    private List<String> data_list;
+    private ArrayAdapter<String> arr_adapter;
 
     private Handler mHandler = new Handler(){
         @Override
@@ -150,51 +155,33 @@ public class PetBaikeActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        pet_baike_dog=findViewById(R.id.pet_baike_dog);
-        pet_baike_cat=findViewById(R.id.pet_baike_cat);
-        pet_baike_paxing=findViewById(R.id.pet_baike_paxing);
-        pet_baike_little=findViewById(R.id.pet_baike_little);
-        pet_baike_watter=findViewById(R.id.pet_baike_watter);
-        pet_baike_cat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        //下拉菜单
+        spinner=findViewById(R.id.baikespinner);
+        data_list = new ArrayList<String>();
+        data_list.add("猫科");
+        data_list.add("犬科");
+        data_list.add("爬行类");
+        data_list.add("小宠物类");
+        data_list.add("水族类");
+        arr_adapter= new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, data_list);
+        arr_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(arr_adapter);
+        spinner.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> arg0, View arg1,
+                                       int arg2, long arg3) {
+                // TODO Auto-generated method stub
                 cleanlist();
-                type="0";
+                type=String.valueOf(arg2);
+                Toast.makeText(PetBaikeActivity.this,"选择"+ arg2, Toast.LENGTH_LONG).show();
                 loadPetData();
             }
-        });
-        pet_baike_dog.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                cleanlist();
-                type="1";
-                loadPetData();
+
+            public void onNothingSelected(AdapterView<?> arg0) {
+                // TODO Auto-generated method stub
             }
         });
-        pet_baike_paxing.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                cleanlist();
-                type="2";
-                loadPetData();
-            }
-        });
-        pet_baike_little.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                cleanlist();
-                type="3";
-                loadPetData();
-            }
-        });
-        pet_baike_watter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                cleanlist();
-                type="4";
-                loadPetData();
-            }
-        });
+
+
         //搜索功能
         pet_baike_search=findViewById(R.id.pet_baike_search);
         pet_baike_search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

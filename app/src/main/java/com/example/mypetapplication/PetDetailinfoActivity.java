@@ -9,6 +9,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
 public class PetDetailinfoActivity extends AppCompatActivity {
     private ImageView pet_detail_img;
     private TextView pet_detail_title,pet_detail_topic,pet_detail_content,pet_detail_price;
@@ -25,10 +28,16 @@ public class PetDetailinfoActivity extends AppCompatActivity {
         pet_detail_price=findViewById(R.id.pet_detail_price);
         pet_detail_content=findViewById(R.id.pet_detail_content);
         Intent intent = this.getIntent();
+        String pet_img = intent.getStringExtra(MainActivity.PET_IMG);
         String pet_title = intent.getStringExtra(MainActivity.PET_TITLE);
         String pet_topic = intent.getStringExtra(MainActivity.PET_TOPIC);
         String pet_price = intent.getStringExtra(MainActivity.PET_PRICE);
         String pet_content = intent.getStringExtra(MainActivity.PET_CONTENT);
+        Glide.with(this)
+                .load(pet_img)
+                .placeholder(R.mipmap.ic_launcher)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .into(pet_detail_img);
         pet_detail_title.setText(pet_title);
         pet_detail_topic.setText(pet_topic);
         pet_detail_price.setText(pet_price);

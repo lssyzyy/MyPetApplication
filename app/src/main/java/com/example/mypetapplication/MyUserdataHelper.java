@@ -14,7 +14,8 @@ public class MyUserdataHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS user" +
-                "(username TEXT," +
+                "(id integer primary key, " +
+                "username TEXT," +
                 "pwd TEXT)");
     }
 

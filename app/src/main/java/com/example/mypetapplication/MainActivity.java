@@ -66,10 +66,12 @@ public class MainActivity extends AppCompatActivity {
     MyDatabaseHelper helper;
     Handler myhandler=new Handler();
     private List<BeanPet> petlist=new ArrayList<>();
+    ArrayList<String> petimg=new ArrayList<String>();
     ArrayList<String> pettitle=new ArrayList<String>();
     ArrayList<String> pettopic=new ArrayList<String>();
     ArrayList<String> petprice=new ArrayList<String>();
     ArrayList<String> petcontent=new ArrayList<String>();
+    public static final String PET_IMG = "pet_img";
     public static final String PET_TITLE = "pet_title";
     public static final String PET_TOPIC = "pet_topic";
     public static final String PET_PRICE = "pet_price";
@@ -136,10 +138,12 @@ public class MainActivity extends AppCompatActivity {
                 BeanPet petl = petlist.get(position);
                 Toast.makeText(MainActivity.this,"选择"+ petl.getPettitle(), Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(MainActivity.this, PetDetailinfoActivity.class);
+                String petimg = petl.getPetimg();
                 String pettitle = petl.getPettitle();
                 String pettopic = petl.getPettopic();
                 String petcontent = petl.getPetcontent();
                 String petprice = petl.getPetprice();
+                intent.putExtra(PET_IMG, petimg);
                 intent.putExtra(PET_TITLE, pettitle);
                 intent.putExtra(PET_TOPIC, pettopic);
                 intent.putExtra(PET_PRICE, petprice);

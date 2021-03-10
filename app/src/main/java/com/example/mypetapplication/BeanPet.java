@@ -1,6 +1,7 @@
 package com.example.mypetapplication;
 
 public class BeanPet {
+    private String petimg;
     private String pettitle;
     private String pettopic;
     private String petprice;
@@ -13,6 +14,13 @@ public class BeanPet {
         this.petcontent=petcontent;
     }
 
+    public String getPetimg() {
+        return petimg;
+    }
+
+    public void setPetimg(String petimg) {
+        this.petimg = petimg;
+    }
 
     public String getPettitle() {
         return pettitle;
