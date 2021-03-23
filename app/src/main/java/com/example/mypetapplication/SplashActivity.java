@@ -2,14 +2,31 @@ package com.example.mypetapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class SplashActivity extends AppCompatActivity {
-    private TextView tg;
+    private TextView daojishi;
+    private LinearLayout tg;
+    private int time=5;
+    private Handler handler=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            time--;
+            daojishi.setText(time+"s");
+            if (time==0){
+                handler.removeMessages(0);
+            }
+            handler.sendEmptyMessageDelayed(0,1000);
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +46,8 @@ public class SplashActivity extends AppCompatActivity {
             }
         };
         myThread.start();
+        daojishi=findViewById(R.id.djstime);
+        handler.sendEmptyMessageDelayed(0,1000);
 
         tg=findViewById(R.id.tg);
         tg.setOnClickListener(new View.OnClickListener() {

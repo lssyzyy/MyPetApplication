@@ -13,6 +13,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.mypetapplication.dataHelper.MyUserdataHelper;
+
 public class ResActivity extends AppCompatActivity {
     private EditText editText1;
     private EditText editText2;

@@ -65,7 +65,8 @@
 
 
         <LinearLayout
-            android:layout_width="426dp"
+            android:id="@+id/data_clean"
+            android:layout_width="match_parent"
             android:layout_height="65dp"
             android:orientation="horizontal">
 
@@ -85,15 +86,11 @@
                 android:text="清理垃圾数据"
                 android:textSize="18dp"/>
 
-            <ImageButton
-                android:onClick="clear"
-                android:layout_width="110dp"
+            <TextView
+                android:id="@+id/tv_data"
+                android:layout_width="100dp"
                 android:layout_height="match_parent"
-                android:background="#002D2F31"
-                android:gravity="right"
-                android:rotation="180"
-                android:scaleType="center"
-                android:src="?attr/actionModeCloseDrawable" />
+                android:gravity="center"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"

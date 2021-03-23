@@ -1,4 +1,4 @@
-package com.example.mypetapplication;
+package com.example.mypetapplication.Bean;
 
 import android.widget.TextView;
 

@@ -72,7 +72,7 @@ public class PetBaikeDetailinfoActivity extends AppCompatActivity {
 
         Glide.with(this)
                 .load(pet_img)
-                .placeholder(R.mipmap.ic_launcher)
+                .placeholder(R.drawable.app_icon2)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(pet_baike_detail_img);
         pet_baike_detail_name.setText(pet_name);

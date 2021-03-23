@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.mypetapplication.service.SendDateToServer;
+import com.example.mypetapplication.dataHelper.MyUserdataHelper;
 import com.facebook.stetho.Stetho;
 
 public class LoginActivity extends AppCompatActivity {
@@ -31,21 +31,6 @@ public class LoginActivity extends AppCompatActivity {
 
     MyUserdataHelper helper;
 
-    Handler handler=new Handler(){
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case SendDateToServer.SEND_SUCCESS:
-                    Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
-                    break;
-                case SendDateToServer.SEND_FAIL:
-                    Toast.makeText(LoginActivity.this, "登录失败", Toast.LENGTH_SHORT).show();
-                    break;
-
-                default:
-                    break;
-            }
-        };
-    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,7 +53,6 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this, "账号或密码不能为空", Toast.LENGTH_LONG).show();
                 }else {
                     if (login(name,pass)){
-                        new SendDateToServer(handler).SendDataToServer(name,pass);
                         Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
                         Intent user=new Intent(LoginActivity.this,MainActivity.class);
                         startActivity(user);

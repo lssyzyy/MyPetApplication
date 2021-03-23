@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
+
+
+import com.example.mypetapplication.Adapter.MyPagerAdapter;
 
 import java.util.ArrayList;
 
@@ -46,7 +48,6 @@ public class ViewPagerActivity extends AppCompatActivity implements ViewPager.On
 
     @Override
     public void onPageSelected(int i) {
-        Toast.makeText(this, "第" + (i + 1) + "页", Toast.LENGTH_SHORT).show();
     }
 
     @Override

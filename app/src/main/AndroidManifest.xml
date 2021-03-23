@@ -4,6 +4,7 @@
     package="com.example.mypetapplication">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <application
         android:allowBackup="true"
@@ -13,6 +14,15 @@
         android:supportsRtl="true"
         android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/AppTheme">
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.lenovo.cameraalbumtest.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
         <activity
             android:name=".SplashActivity"
             android:theme="@style/AppTheme.NoActionBar">
@@ -46,6 +56,9 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".PetBaikeDetailinfoActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".PetReleaseActivity"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
 

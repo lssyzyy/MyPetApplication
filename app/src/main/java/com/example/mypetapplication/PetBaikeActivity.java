@@ -2,7 +2,6 @@ package com.example.mypetapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,8 +13,12 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Spinner;
-import android.widget.TabHost;
 import android.widget.Toast;
+
+import com.example.mypetapplication.Adapter.PetBaikeAdapter;
+import com.example.mypetapplication.Adapter.PetBaikeDetailAdapter;
+import com.example.mypetapplication.Bean.BeanPetBaike;
+import com.example.mypetapplication.Bean.BeanPetBaikeDetail;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -35,7 +38,6 @@ public class PetBaikeActivity extends AppCompatActivity {
     private List<BeanPetBaike> list=new ArrayList<>();
     private List<BeanPetBaikeDetail> list2=new ArrayList<>();
     private ListView reFlashListView;
-    private Button pet_baike_dog,pet_baike_cat,pet_baike_paxing,pet_baike_little,pet_baike_watter;
     private SearchView pet_baike_search;
     String type="0";
     public static final String PET_IMG = "pet_baike_detail_img";

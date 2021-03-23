@@ -11,7 +11,7 @@
         android:background="@drawable/beautiful_linearlayout_border">
 
         <Button
-            android:id="@+id/set_back"
+            android:id="@+id/release_back"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginLeft="15dp"
@@ -37,7 +37,7 @@
         <ListView
             android:id="@+id/releaselist"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 

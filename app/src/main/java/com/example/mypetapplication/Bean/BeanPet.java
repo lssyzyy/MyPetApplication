@@ -1,4 +1,4 @@
-package com.example.mypetapplication;
+package com.example.mypetapplication.Bean;
 
 public class BeanPet {
     private String petimg;
@@ -6,12 +6,15 @@ public class BeanPet {
     private String pettopic;
     private String petprice;
     private String petcontent;
+    private String petyimiao;
     public BeanPet(){};
-    public BeanPet(String pettitle,String pettopic,String petprice,String petcontent){
+    public BeanPet(String petimg,String pettitle,String pettopic,String petprice,String petcontent,String petyimiao){
+        this.petimg=petimg;
         this.pettitle=pettitle;
         this.pettopic=pettopic;
         this.petprice=petprice;
         this.petcontent=petcontent;
+        this.petyimiao=petyimiao;
     }
 
     public String getPetimg() {
@@ -53,4 +56,13 @@ public class BeanPet {
     public void setPetcontent(String petcontent) {
         this.petcontent = petcontent;
     }
+
+    public String getPetyimiao() {
+        return petyimiao;
+    }
+
+    public void setPetyimiao(String petyimiao) {
+        this.petyimiao = petyimiao;
+    }
+
 }

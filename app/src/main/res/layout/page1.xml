@@ -8,18 +8,31 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
+        <LinearLayout
             android:id="@+id/tg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/button_circle_touming"
             android:layout_alignParentRight="true"
             android:layout_marginRight="15dp"
             android:layout_marginTop="25dp"
-            android:textSize="16dp"
-            android:text="跳过"
-            android:textColor="#ffffff"
-            android:background="@drawable/button_circle_touming"/>
+            android:orientation="horizontal">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16dp"
+                android:text="跳过"
+                android:textColor="#ffffff"/>
+            <TextView
+                android:id="@+id/djstime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16dp"
+                android:textColor="#ffffff"
+                android:text="5s"/>
+
+        </LinearLayout>
     </RelativeLayout>
 
 </LinearLayout>

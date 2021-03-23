@@ -1,4 +1,4 @@
-package com.example.mypetapplication;
+package com.example.mypetapplication.Bean;
 
 public class BeanPetBaike {
     private String imageView;

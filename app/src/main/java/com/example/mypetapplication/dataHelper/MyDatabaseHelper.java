@@ -1,4 +1,4 @@
-package com.example.mypetapplication;
+package com.example.mypetapplication.dataHelper;
 
 
 import android.content.ContentValues;
@@ -16,11 +16,12 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db){
         db.execSQL("CREATE TABLE IF NOT EXISTS petsdb" +
                 "(id integer primary key, " +
-                "petimg text,"+
+                "petimg blob,"+
                 "pettitle text," +
                 "pettopic text," +
                 "petprice text," +
-                "petcontent text)");
+                "petcontent text," +
+                "petyimiao text)");
     }
 
     @Override

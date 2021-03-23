@@ -1,4 +1,4 @@
-package com.example.mypetapplication;
+package com.example.mypetapplication.Adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,6 +9,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.mypetapplication.Bean.BeanPetBaike;
+import com.example.mypetapplication.R;
 
 import java.util.List;
 
@@ -57,7 +59,7 @@ public class PetBaikeAdapter extends ArrayAdapter {
         viewHolder.price.setText(bean.getPrice());
         Glide.with(context)
                 .load(objects.get(position).getImageView())
-                .placeholder(R.mipmap.ic_launcher)
+                .placeholder(R.drawable.app_icon2)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(viewHolder.img);
 

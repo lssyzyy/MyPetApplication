@@ -1,4 +1,4 @@
-package com.example.mypetapplication;
+package com.example.mypetapplication.Adapter;
 
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,7 +7,7 @@ import androidx.viewpager.widget.PagerAdapter;
 
 import java.util.ArrayList;
 
-class MyPagerAdapter extends PagerAdapter {
+public class MyPagerAdapter extends PagerAdapter {
     private ArrayList<View> viewLists;
 
     public MyPagerAdapter(ArrayList<View> viewLists) {
