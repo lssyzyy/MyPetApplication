@@ -47,7 +47,9 @@
             android:id="@+id/Ed1"
             android:layout_toRightOf="@+id/Tx1"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:inputType="textVisiblePassword"
+            android:digits="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"/>
         <TextView
             android:id="@+id/TX2"
             android:text="密码"
