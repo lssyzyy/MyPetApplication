@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mypetapplication.Adapter.PetBaikeAdapter;
@@ -30,7 +31,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class PetBaikeActivity extends AppCompatActivity {
+public class PetBaikeActivity extends AppCompatActivity implements View.OnClickListener{
 
     private  final int SHOW_PETDATA = 0;
     private PetBaikeAdapter adapter;
@@ -40,6 +41,8 @@ public class PetBaikeActivity extends AppCompatActivity {
     private ListView reFlashListView;
     private SearchView pet_baike_search;
     String type="0";
+    String page="1";
+    int pa=Integer.parseInt(page);
     public static final String PET_IMG = "pet_baike_detail_img";
     public static final String PET_NAME = "pet_baike_detail_name";
     public static final String PET_ENGNAME = "pet_baike_detail_engname";
@@ -60,6 +63,7 @@ public class PetBaikeActivity extends AppCompatActivity {
     private Spinner spinner;
     private List<String> data_list;
     private ArrayAdapter<String> arr_adapter;
+    private Button prePager, nexPager;
 
     private Handler mHandler = new Handler(){
         @Override
@@ -83,7 +87,7 @@ public class PetBaikeActivity extends AppCompatActivity {
                 try {
 
                     OkHttpClient client = new OkHttpClient();
-                    Request request = new Request.Builder().url("http://api.tianapi.com/txapi/pet/index?key=3c66023c430ded049c9a35ec27aeaa56&type="+type+"&page=1&num=15").build();
+                    Request request = new Request.Builder().url("http://api.tianapi.com/txapi/pet/index?key=3c66023c430ded049c9a35ec27aeaa56&type="+type+"&page="+page+"&num=15").build();
                     Response response = client.newCall(request).execute();
                     String responseData = response.body().string();
 
@@ -101,18 +105,57 @@ public class PetBaikeActivity extends AppCompatActivity {
             }
         }).start();
     }
-    private void find(){
-        reFlashListView = findViewById(R.id.listv);
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.pre_pager:
+                cleanlist();
+                prePager();
+                loadPetData();
+                break;
+            case R.id.nex_pager:
+                cleanlist();
+                nexPager();
+                loadPetData();
+                break;
+        }
     }
 
+    private void nexPager() {
+        pa++;
+        page=Integer.toString(pa);
+        Toast.makeText(PetBaikeActivity.this,"第"+pa+"页", Toast.LENGTH_LONG).show();
+        adapter.notifyDataSetChanged();
+        checkButton();
+    }
+    private void checkButton() {
+        if (pa<=1){
+            prePager.setVisibility(View.INVISIBLE);
+            nexPager.setVisibility(View.VISIBLE);
+        }else{
+            prePager.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void prePager() {
+        pa--;
+        page=Integer.toString(pa);
+        Toast.makeText(PetBaikeActivity.this,"第"+pa+"页", Toast.LENGTH_LONG).show();
+        adapter.notifyDataSetChanged();
+        checkButton();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pet_baike);
 
-        find();
+        reFlashListView = findViewById(R.id.listv);
         loadPetData();
+        prePager = (Button) findViewById(R.id.pre_pager);
+        nexPager = (Button) findViewById(R.id.nex_pager);
+        prePager.setOnClickListener(this);
+        nexPager.setOnClickListener(this);
+        prePager.setVisibility(View.INVISIBLE);
         Button btn2 = findViewById(R.id.petbaike_back);
         btn2.setOnClickListener(new View.OnClickListener() {
             @Override

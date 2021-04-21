@@ -115,6 +115,7 @@
                 android:background="@drawable/button_circle_shape"
                 android:text="注册"
                 android:textSize="18dp"/>
+
         </LinearLayout>
     </LinearLayout>
 

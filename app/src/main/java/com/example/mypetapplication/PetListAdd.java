@@ -1,12 +1,17 @@
 package com.example.mypetapplication;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.Gravity;
 import android.view.View;
@@ -23,13 +28,17 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import com.example.mypetapplication.Adapter.PetAdapter;
 import com.example.mypetapplication.Bean.BeanPet;
 import com.example.mypetapplication.dataHelper.MyDatabaseHelper;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class PetListAdd extends AppCompatActivity {
@@ -41,10 +50,10 @@ public class PetListAdd extends AppCompatActivity {
     private Button btn_pet_add_ok,btn_re;
     private List<BeanPet> petlist=new ArrayList<>();
     private String petdetailimg;
-    public static final int TAKE_PHOTO = 1;
-    public static final int CHOOSE_PHOTO = 2;
     private String yimiao;
     private RadioButton checked;
+    private Bitmap photo;
+    private String picPath;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,19 +81,21 @@ public class PetListAdd extends AppCompatActivity {
                 btn_camera.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        startActivityForResult(intent, 1);
-                        popupwindow.dismiss();
+                        String state = Environment.getExternalStorageState();// 获取内存卡可用状态
+                        if (state.equals(Environment.MEDIA_MOUNTED)) {
+                            Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+                            startActivityForResult(intent, 1);
+                        } else {
+                            Toast.makeText(PetListAdd.this, "内存不可用", Toast.LENGTH_LONG).show();
+                        }
                     }
                 });
                 //相册
                 btn_album.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent("android.intent.action.GET_CONTENT");
-                        intent.setType("image/*");
-                        startActivityForResult(intent, CHOOSE_PHOTO);//打开相册
-
+                        Intent i = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        startActivityForResult(i, 2);
                         popupwindow.dismiss();
                     }
                 });
@@ -146,6 +157,8 @@ public class PetListAdd extends AppCompatActivity {
         btn_re.setOnClickListener(new  View.OnClickListener(){
             @Override
             public void onClick(View v){
+                Intent intent = new Intent(PetListAdd.this, MainActivity.class);
+                startActivity(intent);
                 PetListAdd.this.finish();
             }
         });
@@ -160,15 +173,74 @@ public class PetListAdd extends AppCompatActivity {
         contentValues.put("petyimiao",yimiao);
         db.insert("petsdb",null,contentValues);
     }
-    //获取本地图片
+    //处理图片
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // TODO Auto-generated method stub
-        if (requestCode == 0x1 && resultCode == RESULT_OK) {
-            if (data != null) {
-                imageview.setImageURI(data.getData());
+        super.onActivityResult(requestCode, resultCode, data);
+        if (data != null) {
+            switch (requestCode) {
+                case 1:// 两种方式 获取拍好的图片
+                    if (data.getData() != null || data.getExtras() != null) { // 防止没有返回结果
+                        Uri uri = data.getData();
+                        if (uri != null) {
+                            this.photo = BitmapFactory.decodeFile(uri.getPath()); // 拿到图片
+                        }
+                        if (photo == null) {
+                            Bundle bundle = data.getExtras();
+                            if (bundle != null) {
+                                photo = (Bitmap) bundle.get("data");
+                                FileOutputStream fileOutputStream = null;
+                                try {// 获取 SD 卡根目录 生成图片并
+                                    String saveDir = Environment
+                                            .getExternalStorageDirectory()
+                                            + "/zyy_Photos";// 新建目录
+                                    File dir = new File(saveDir);
+                                    if (!dir.exists())
+                                        dir.mkdir();// 生成文件名
+                                    SimpleDateFormat t = new SimpleDateFormat("yyyyMMddssSSS");
+                                    String filename = "MT" + (t.format(new Date()))
+                                            + ".jpg";// 新建文件
+                                    File file = new File(saveDir, filename);// 打开文件输出流
+                                    fileOutputStream = new FileOutputStream(file);// 生成图片文件
+                                    this.photo.compress(Bitmap.CompressFormat.JPEG,
+                                            100, fileOutputStream);// 相片的完整路径
+                                    this.picPath = file.getPath();
+                                    imageview.setImageBitmap(this.photo);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                } finally {
+                                    if (fileOutputStream != null) {
+                                        try {
+                                            fileOutputStream.close();
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }
+                                Toast.makeText(getApplicationContext(), "获取到了",Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getApplicationContext(), "找不到图片",Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                    break;
+                case 2: {//打开相册并选择照片，这个方式选择单张
+                    // 获取返回的数据，这里是android自定义的Uri地址
+                    Uri selectedImage = data.getData();
+                    String[] filePathColumn = { MediaStore.Images.Media.DATA };// 获取选择照片的数据视图
+                    Cursor cursor = getContentResolver().query(selectedImage,
+                            filePathColumn, null, null, null);
+                    cursor.moveToFirst();// 从数据视图中获取已选择图片的路径
+                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                    String picturePath = cursor.getString(columnIndex);
+                    cursor.close();
+                    imageview.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+                    break;
+                }
+                default:
+                    break;
             }
         }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 }

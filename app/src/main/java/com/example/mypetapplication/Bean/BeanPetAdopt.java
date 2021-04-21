@@ -1,6 +1,6 @@
 package com.example.mypetapplication.Bean;
 
-public class BeanPet {
+public class BeanPetAdopt {
     private int petid;
     private String petimg;
     private String pettitle;
@@ -8,8 +8,8 @@ public class BeanPet {
     private String petprice;
     private String petcontent;
     private String petyimiao;
-    public BeanPet(){};
-    public BeanPet(int petid,String petimg,String pettitle,String pettopic,String petprice,String petcontent,String petyimiao){
+    public BeanPetAdopt(){};
+    public BeanPetAdopt(int petid,String petimg,String pettitle,String pettopic,String petprice,String petcontent,String petyimiao){
         this.petid=petid;
         this.petimg=petimg;
         this.pettitle=pettitle;

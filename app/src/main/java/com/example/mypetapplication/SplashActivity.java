@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.mypetapplication.service.DBHelper;
+
 public class SplashActivity extends AppCompatActivity {
     private TextView daojishi;
     private LinearLayout tg;
@@ -27,6 +29,7 @@ public class SplashActivity extends AppCompatActivity {
             handler.sendEmptyMessageDelayed(0,1000);
         }
     };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

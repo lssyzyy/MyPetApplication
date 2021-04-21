@@ -208,40 +208,6 @@
             android:layout_gravity="center"
             android:background="#e0e0e0"/>
         <LinearLayout
-            android:id="@+id/mine_shoucang"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:orientation="horizontal"
-            android:layout_weight="1">
-            <ImageView
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:background="@drawable/shoucang"
-                android:layout_gravity="center"
-                android:layout_marginLeft="40dp"
-                android:layout_marginRight="40dp"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="我收藏的"
-                android:textColor="#000000"
-                android:gravity="center_vertical"
-                android:textStyle="bold"
-                android:textSize="17dp"/>
-            <Button
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="@drawable/right"
-                android:layout_marginRight="20dp"
-                android:layout_gravity="center"/>
-        </LinearLayout>
-        <TextView
-            android:layout_width="340dp"
-            android:layout_height="0.6dp"
-            android:layout_gravity="center"
-            android:background="#e0e0e0"/>
-        <LinearLayout
             android:id="@+id/mine_set"
             android:layout_width="match_parent"
             android:layout_height="60dp"

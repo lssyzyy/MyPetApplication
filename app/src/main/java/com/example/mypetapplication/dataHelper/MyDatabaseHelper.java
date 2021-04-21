@@ -1,7 +1,6 @@
 package com.example.mypetapplication.dataHelper;
 
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -22,10 +21,19 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
                 "petprice text," +
                 "petcontent text," +
                 "petyimiao text)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS petsadopt" +
+                "(id integer primary key, " +
+                "petimg blob,"+
+                "pettitle text," +
+                "pettopic text," +
+                "petprice text," +
+                "petcontent text," +
+                "petyimiao text)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("drop table if exists petsdb");
+        db.execSQL("drop table if exists petsadopt");
     }
 }

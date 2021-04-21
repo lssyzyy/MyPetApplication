@@ -53,12 +53,14 @@ public class MainActivity extends AppCompatActivity {
     MyDatabaseHelper helper;
     Handler myhandler = new Handler();
     private List<BeanPet> petlist = new ArrayList<>();
+    ArrayList<Integer> petid = new ArrayList<Integer>();
     ArrayList<String> petimg = new ArrayList<String>();
     ArrayList<String> pettitle = new ArrayList<String>();
     ArrayList<String> pettopic = new ArrayList<String>();
     ArrayList<String> petprice = new ArrayList<String>();
     ArrayList<String> petcontent = new ArrayList<String>();
     ArrayList<String> petyimiao = new ArrayList<String>();
+    public static final String PET_ID = "pet_id";
     public static final String PET_IMG = "pet_img";
     public static final String PET_TITLE = "pet_title";
     public static final String PET_TOPIC = "pet_topic";
@@ -90,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, PetListAdd.class);
                 startActivity(intent);
+                MainActivity.this.finish();
             }
         });
 
@@ -132,12 +135,14 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 BeanPet petl = petlist.get(position);
                 Intent intent = new Intent(MainActivity.this, PetDetailinfoActivity.class);
+                String petid=Integer.toString(petl.getPetid());
                 String petimg = petl.getPetimg();
                 String pettitle = petl.getPettitle();
                 String pettopic = petl.getPettopic();
                 String petcontent = petl.getPetcontent();
                 String petprice = petl.getPetprice();
                 String petyimiao = petl.getPetyimiao();
+                intent.putExtra(PET_ID, petid);
                 intent.putExtra(PET_IMG, petimg);
                 intent.putExtra(PET_TITLE, pettitle);
                 intent.putExtra(PET_TOPIC, pettopic);
@@ -149,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        //我的下的四个选项
+        //"我的"下的三个选项
         //系统设置
         LinearLayout btn_set = findViewById(R.id.mine_set);
         btn_set.setOnClickListener(new View.OnClickListener() {
@@ -166,6 +171,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, PetReleaseActivity.class);
+                startActivity(intent);
+            }
+        });
+        //我的领养
+        LinearLayout btn_adopt = findViewById(R.id.mine_adopt);
+        btn_adopt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, PetAdoptActivity.class);
                 startActivity(intent);
             }
         });
@@ -214,6 +228,7 @@ public class MainActivity extends AppCompatActivity {
         petlist = queryAllContent();
         for (BeanPet d : petlist) {
             if (d != null) {
+                petid.add(d.getPetid());
                 petimg.add(d.getPetimg());
                 pettitle.add(d.getPettitle());
                 pettopic.add(d.getPettopic());
@@ -229,13 +244,14 @@ public class MainActivity extends AppCompatActivity {
         Cursor cursor = db.query("petsdb", null, null, null, null, null, null);
         while (cursor.moveToNext()) {
             BeanPet data = null;
+            int petid = cursor.getColumnIndex("id");
             String petimg = cursor.getString(cursor.getColumnIndex("petimg"));
             String pettitle = cursor.getString(cursor.getColumnIndex("pettitle"));
             String pettopic = cursor.getString(cursor.getColumnIndex("pettopic"));
             String petprice = cursor.getString(cursor.getColumnIndex("petprice"));
             String petcontent = cursor.getString(cursor.getColumnIndex("petcontent"));
             String petyimiao = cursor.getString(cursor.getColumnIndex("petyimiao"));
-            data = new BeanPet(petimg,pettitle, pettopic, petprice, petcontent,petyimiao);
+            data = new BeanPet(petid,petimg,pettitle, pettopic, petprice, petcontent,petyimiao);
             datas.add(data);
         }
         cursor.close();
@@ -310,8 +326,7 @@ public class MainActivity extends AppCompatActivity {
                                 // TODO Auto-generated method stub
                                 dialog.dismiss();
                             }
-                        })
-                        .show();
+                        }).show();
                 break;
             default:
                 break;
@@ -345,5 +360,8 @@ public class MainActivity extends AppCompatActivity {
         catch (Exception e) {
             return null;
         }
+    }
+    public void refresh() {
+        onCreate(null);
     }
 }

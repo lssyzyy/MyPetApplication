@@ -18,15 +18,7 @@ import com.example.mypetapplication.dataHelper.MyDatabaseHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.mypetapplication.MainActivity.PET_CONTENT;
-import static com.example.mypetapplication.MainActivity.PET_IMG;
-import static com.example.mypetapplication.MainActivity.PET_PRICE;
-import static com.example.mypetapplication.MainActivity.PET_TITLE;
-import static com.example.mypetapplication.MainActivity.PET_TOPIC;
-import static com.example.mypetapplication.MainActivity.PET_YIMIAO;
-
-public class PetReleaseActivity  extends AppCompatActivity {
-
+public class PetAdoptActivity extends AppCompatActivity {
     private SQLiteDatabase db;
     MyDatabaseHelper helper;
     private ListView listView;
@@ -41,46 +33,24 @@ public class PetReleaseActivity  extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_release);
+        setContentView(R.layout.activity_adopt);
 
         helper = new MyDatabaseHelper(this, "petdata", null, 1);
         db = helper.getWritableDatabase();
         initDatas();
-        Button btn2 = findViewById(R.id.release_back);
+        Button btn2 = findViewById(R.id.adopt_back);
         btn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PetReleaseActivity.this.finish();
+                PetAdoptActivity.this.finish();
             }
         });
-
         //显示宠物列表信息
         petadapter = new PetAdapter(this, R.layout.pets_list, petlist);
-        listView = findViewById(R.id.releaselist);
+        listView = findViewById(R.id.adoptlist);
         listView.setAdapter(petadapter);
         listView.setTextFilterEnabled(true);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                BeanPet petl = petlist.get(position);
-                Intent intent = new Intent(PetReleaseActivity.this, PetDetailinfoActivity.class);
-                String petimg = petl.getPetimg();
-                String pettitle = petl.getPettitle();
-                String pettopic = petl.getPettopic();
-                String petcontent = petl.getPetcontent();
-                String petprice = petl.getPetprice();
-                String petyimiao = petl.getPetyimiao();
-                intent.putExtra(PET_IMG, petimg);
-                intent.putExtra(PET_TITLE, pettitle);
-                intent.putExtra(PET_TOPIC, pettopic);
-                intent.putExtra(PET_PRICE, petprice);
-                intent.putExtra(PET_CONTENT, petcontent);
-                intent.putExtra(PET_YIMIAO, petyimiao);
-                startActivity(intent);
-            }
-        });
     }
-
     //初始化数据
     private void initDatas() {
         petlist = queryAllContent();
@@ -97,7 +67,7 @@ public class PetReleaseActivity  extends AppCompatActivity {
     }
     public ArrayList<BeanPet> queryAllContent() {
         ArrayList<BeanPet> datas = new ArrayList<>();
-        Cursor cursor = db.query("petsdb", null, null, null, null, null, null);
+        Cursor cursor = db.query("petsadopt", null, null, null, null, null, null);
         while (cursor.moveToNext()) {
             BeanPet data = null;
             int petid = cursor.getColumnIndex("id");

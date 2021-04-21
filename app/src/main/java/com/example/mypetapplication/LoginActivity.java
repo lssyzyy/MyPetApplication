@@ -19,7 +19,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mypetapplication.dataHelper.MyUserdataHelper;
-import com.example.mypetapplication.service.SendDateToServer;
 import com.facebook.stetho.Stetho;
 
 import java.util.regex.Matcher;
