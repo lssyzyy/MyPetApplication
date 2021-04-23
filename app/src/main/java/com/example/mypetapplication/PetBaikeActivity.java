@@ -255,6 +255,7 @@ public class PetBaikeActivity extends AppCompatActivity implements View.OnClickL
             adapter = new PetBaikeAdapter(PetBaikeActivity.this,0,list);
 
             reFlashListView.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
         }else {
             adapter.onDateChange(list);
         }
@@ -262,7 +263,7 @@ public class PetBaikeActivity extends AppCompatActivity implements View.OnClickL
     private void showList2() {
         if (adapterbaike==null){
             adapterbaike = new PetBaikeDetailAdapter(PetBaikeActivity.this,0,list2);
-
+            adapter.notifyDataSetChanged();
         }else {
             adapterbaike.onDateChange(list2);
         }

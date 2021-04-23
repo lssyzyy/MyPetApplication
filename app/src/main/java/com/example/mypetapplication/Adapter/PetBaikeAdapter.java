@@ -22,7 +22,6 @@ public class PetBaikeAdapter extends ArrayAdapter {
         this.context = context;
         this.objects = objects;
     }
-
     @Override
     public int getCount() {
         return objects.size();

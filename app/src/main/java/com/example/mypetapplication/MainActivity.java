@@ -349,17 +349,18 @@ public class MainActivity extends AppCompatActivity {
         return Base64.encodeToString(appicon, Base64.DEFAULT);
     }
     //String转成bitmap
-    public static Bitmap convertStringToIcon(String st) {
+    public static Bitmap convertStringToIcon(String string) {
+        // 将字符串转换成Bitmap类型
         Bitmap bitmap = null;
         try {
             byte[] bitmapArray;
-            bitmapArray = Base64.decode(st, Base64.DEFAULT);
-            bitmap = BitmapFactory.decodeByteArray(bitmapArray, 0, bitmapArray.length);
-            return bitmap;
+            bitmapArray = Base64.decode(string, Base64.DEFAULT);
+            bitmap = BitmapFactory.decodeByteArray(bitmapArray, 0,
+                    bitmapArray.length);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        catch (Exception e) {
-            return null;
-        }
+        return bitmap;
     }
     public void refresh() {
         onCreate(null);

@@ -15,7 +15,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db){
         db.execSQL("CREATE TABLE IF NOT EXISTS petsdb" +
                 "(id integer primary key, " +
-                "petimg blob,"+
+                "petimg varchar(10000),"+
                 "pettitle text," +
                 "pettopic text," +
                 "petprice text," +
@@ -23,7 +23,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
                 "petyimiao text)");
         db.execSQL("CREATE TABLE IF NOT EXISTS petsadopt" +
                 "(id integer primary key, " +
-                "petimg blob,"+
+                "petimg varchar(10000),"+
                 "pettitle text," +
                 "pettopic text," +
                 "petprice text," +

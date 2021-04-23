@@ -64,6 +64,9 @@
         <activity
             android:name=".PetAdoptActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".PetReleaseDetailinfoActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

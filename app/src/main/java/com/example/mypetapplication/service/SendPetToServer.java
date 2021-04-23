@@ -13,13 +13,13 @@ import java.util.Map;
  * @author jph
  * Date:2014.09.27
  */
-public class SendDateToServer {
-    private static String url="http://10.67.181.21:8088/webManager_war_exploded/ServletForGETMethod";
+public class SendPetToServer {
+    private static String url="http://10.67.181.21:8088/webManager_war_exploded/PetServletForGETMethod";
     public static final int SEND_SUCCESS = 0x123;
     public static final int SEND_FAIL = 0x124;
     private Handler handler;
 
-    public SendDateToServer(Handler handler) {
+    public SendPetToServer(Handler handler) {
         // TODO Auto-generated constructor stub
         this.handler = handler;
     }
@@ -27,14 +27,22 @@ public class SendDateToServer {
     /**
      * 通过Get方式向服务器发送数据
      *
-     * @param name 用户名
-     * @param pwd  密码
+     * @param petimg 图片
+     * @param pettitle  标题
+     * @param pettopic  种类
+     * @param petprice  价格
+     * @param petcontent  详细信息
+     * @param petyimiao  疫苗
+     *
      */
-    public void SendDataToServer(String name, String pwd) {
+    public void SendPetDataToServer(String pettitle, String pettopic, String petprice, String petcontent, String petyimiao) {
         // TODO Auto-generated method stub
         final Map<String, String> map = new HashMap<String, String>();
-        map.put("name", name);
-        map.put("pwd", pwd);
+        map.put("pettitle", pettitle);
+        map.put("pettopic", pettopic);
+        map.put("petprice", petprice);
+        map.put("petcontent", petcontent);
+        map.put("petyimiao", petyimiao);
         new Thread(new Runnable() {
             @Override
             public void run() {

@@ -63,7 +63,7 @@ public class PetReleaseActivity  extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 BeanPet petl = petlist.get(position);
-                Intent intent = new Intent(PetReleaseActivity.this, PetDetailinfoActivity.class);
+                Intent intent = new Intent(PetReleaseActivity.this, PetReleaseDetailinfoActivity.class);
                 String petimg = petl.getPetimg();
                 String pettitle = petl.getPettitle();
                 String pettopic = petl.getPettopic();
@@ -77,6 +77,7 @@ public class PetReleaseActivity  extends AppCompatActivity {
                 intent.putExtra(PET_CONTENT, petcontent);
                 intent.putExtra(PET_YIMIAO, petyimiao);
                 startActivity(intent);
+                PetReleaseActivity.this.finish();
             }
         });
     }

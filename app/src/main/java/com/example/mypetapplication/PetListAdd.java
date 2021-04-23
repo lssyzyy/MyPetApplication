@@ -10,8 +10,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.view.Gravity;
 import android.view.View;
@@ -33,6 +36,7 @@ import androidx.core.content.FileProvider;
 import com.example.mypetapplication.Adapter.PetAdapter;
 import com.example.mypetapplication.Bean.BeanPet;
 import com.example.mypetapplication.dataHelper.MyDatabaseHelper;
+import com.example.mypetapplication.service.SendPetToServer;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -40,6 +44,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static com.example.mypetapplication.MainActivity.convertIconToString;
+
 
 public class PetListAdd extends AppCompatActivity {
     private SQLiteDatabase db;
@@ -49,11 +56,26 @@ public class PetListAdd extends AppCompatActivity {
     private ImageView imageview;
     private Button btn_pet_add_ok,btn_re;
     private List<BeanPet> petlist=new ArrayList<>();
-    private String petdetailimg;
     private String yimiao;
     private RadioButton checked;
     private Bitmap photo;
     private String picPath;
+    private String petdetailimg;
+    Handler handler=new Handler(){
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case SendPetToServer.SEND_SUCCESS:
+                    Toast.makeText(PetListAdd.this, "添加宠物成功", Toast.LENGTH_SHORT).show();
+                    break;
+                case SendPetToServer.SEND_FAIL:
+                    Toast.makeText(PetListAdd.this, "添加宠物失败", Toast.LENGTH_SHORT).show();
+                    break;
+
+                default:
+                    break;
+            }
+        };
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +93,9 @@ public class PetListAdd extends AppCompatActivity {
         imageview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                }
                 View view = View.inflate(PetListAdd.this, R.layout.popwindow, null);
                 Button btn_album = view.findViewById(R.id.pop_album);
                 Button btn_camera = view.findViewById(R.id.pop_camera);
@@ -85,6 +110,7 @@ public class PetListAdd extends AppCompatActivity {
                         if (state.equals(Environment.MEDIA_MOUNTED)) {
                             Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
                             startActivityForResult(intent, 1);
+                            Toast.makeText(getApplicationContext(), petdetailimg,Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(PetListAdd.this, "内存不可用", Toast.LENGTH_LONG).show();
                         }
@@ -96,6 +122,7 @@ public class PetListAdd extends AppCompatActivity {
                     public void onClick(View v) {
                         Intent i = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                         startActivityForResult(i, 2);
+                        Toast.makeText(getApplicationContext(), petdetailimg,Toast.LENGTH_SHORT).show();
                         popupwindow.dismiss();
                     }
                 });
@@ -130,9 +157,9 @@ public class PetListAdd extends AppCompatActivity {
         btn_pet_add_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(money.getText().toString().length()==0||title.getText().toString().length()==0||content.getText().toString().length()==0){
+                if(money.getText().toString().length()==0||title.getText().toString().length()==0||content.getText().toString().length()==0||name.getText().toString().length()==0){
                     Toast.makeText(PetListAdd.this,"文本框不得有空",Toast.LENGTH_SHORT).show();
-                }else if(money.getText().toString().length()!=0&&title.getText().toString().length()!=0&&content.getText().toString().length()!=0){
+                }else if(money.getText().toString().length()!=0&&title.getText().toString().length()!=0&&content.getText().toString().length()!=0&&name.getText().toString().length()!=0){
                     rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                         @Override
                         public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -148,6 +175,7 @@ public class PetListAdd extends AppCompatActivity {
                     }
                     Insertdata();
                     Toast.makeText(PetListAdd.this,"添加成功",Toast.LENGTH_SHORT).show();
+                    new SendPetToServer(handler).SendPetDataToServer(title.getText().toString(),name.getText().toString(),money.getText().toString(),content.getText().toString(),yimiao);
                     Intent intent=new Intent(PetListAdd.this,MainActivity.class);
                     startActivity(intent);
                 }
@@ -206,6 +234,7 @@ public class PetListAdd extends AppCompatActivity {
                                     this.photo.compress(Bitmap.CompressFormat.JPEG,
                                             100, fileOutputStream);// 相片的完整路径
                                     this.picPath = file.getPath();
+                                    petdetailimg=convertIconToString(this.photo);
                                     imageview.setImageBitmap(this.photo);
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -235,6 +264,7 @@ public class PetListAdd extends AppCompatActivity {
                     int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                     String picturePath = cursor.getString(columnIndex);
                     cursor.close();
+                    petdetailimg=convertIconToString(BitmapFactory.decodeFile(picturePath));
                     imageview.setImageBitmap(BitmapFactory.decodeFile(picturePath));
                     break;
                 }
@@ -243,4 +273,5 @@ public class PetListAdd extends AppCompatActivity {
             }
         }
     }
+
 }

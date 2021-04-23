@@ -15,8 +15,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.mypetapplication.dataHelper.MyDatabaseHelper;
 
 import static com.example.mypetapplication.MainActivity.convertStringToIcon;
