@@ -1,13 +1,11 @@
 package com.example.mypetapplication;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -15,8 +13,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.mypetapplication.dataHelper.MyDatabaseHelper;
 
+import static com.example.mypetapplication.MainActivity.convertIconToString;
 import static com.example.mypetapplication.MainActivity.convertStringToIcon;
 
 public class PetDetailinfoActivity extends AppCompatActivity {
@@ -73,8 +75,6 @@ public class PetDetailinfoActivity extends AppCompatActivity {
                                 petadopt(pet_title);
                                 dialog.dismiss();
                                 Toast.makeText(PetDetailinfoActivity.this,"领养成功",Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(PetDetailinfoActivity.this, MainActivity.class);
-                                startActivity(intent);
                                 PetDetailinfoActivity.this.finish();
                             }
                         })
@@ -93,13 +93,14 @@ public class PetDetailinfoActivity extends AppCompatActivity {
         MyDatabaseHelper helper = new MyDatabaseHelper(this, "petdata", null,1);
         SQLiteDatabase db=helper.getWritableDatabase();
         db.delete("petsdb","pettitle=?",new String[]{pettitle});
+        Bitmap bitmap = ((BitmapDrawable)pet_detail_img.getDrawable()).getBitmap();
         ContentValues contentValues=new ContentValues();
+        contentValues.put("petimg",convertIconToString(bitmap));
         contentValues.put("pettitle",pet_detail_title.getText().toString());
         contentValues.put("pettopic",pet_detail_topic.getText().toString());
         contentValues.put("petprice",pet_detail_price.getText().toString());
         contentValues.put("petcontent",pet_detail_content.getText().toString());
         contentValues.put("petyimiao",pet_detail_yimiao.getText().toString());
         db.insert("petsadopt",null,contentValues);
-        db.close();
     }
 }

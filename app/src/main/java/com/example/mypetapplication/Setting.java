@@ -1,7 +1,6 @@
 package com.example.mypetapplication;
 
 import android.content.DialogInterface;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,7 +10,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 
 import com.example.mypetapplication.Other.DataCleanManager;
 
@@ -23,19 +21,6 @@ public class Setting extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.setting);
         init();
-        Button switchComponent = findViewById(R.id.night);
-        switchComponent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int mode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-                if(mode == Configuration.UI_MODE_NIGHT_YES) {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                } else if(mode == Configuration.UI_MODE_NIGHT_NO) {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                }
-                recreate();
-            }
-        });
         //清除缓存
         LinearLayout llCleanData = (LinearLayout) findViewById(R.id.data_clean);
         tvData = (TextView) findViewById(R.id.tv_data);

@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.PERMISSIONS_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <application
         android:allowBackup="true"
         android:icon="@drawable/app_icon2"
@@ -67,6 +68,12 @@
         <activity
             android:name=".PetReleaseDetailinfoActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".MineEditActivity"
+            android:theme="@style/AppTheme.NoActionBar"  />
+        <activity
+            android:name=".PetReleaseDetailInfoEditActivity"
+            android:theme="@style/AppTheme.NoActionBar"   />
     </application>
 
 </manifest>

@@ -13,7 +13,7 @@
         android:background="@drawable/beautiful_linearlayout_border">
 
         <Button
-            android:id="@+id/pet_detail_back"
+            android:id="@+id/pet_detail_edit_back"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginLeft="15dp"
@@ -29,16 +29,6 @@
             android:text="详细信息"
             android:textColor="#000000"
             android:textSize="25dp" />
-
-        <Button
-            android:id="@+id/release_edit"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="15dp"
-            android:layout_marginRight="15dp"
-            android:background="@drawable/reedit"/>
     </RelativeLayout>
 
     <ScrollView
@@ -50,27 +40,29 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/pet_detail_title"
+            <EditText
+                android:id="@+id/pet_detail_title_edit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
+                android:background="@android:drawable/edit_text"
                 android:text="标题"
                 android:textColor="#000000"
                 android:textSize="30dp" />
 
             <ImageView
-                android:id="@+id/pet_detail_img"
+                android:id="@+id/pet_detail_img_edit"
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
                 android:layout_gravity="center"
                 android:layout_margin="25dp" />
 
-            <TextView
-                android:id="@+id/pet_detail_price"
+            <EditText
+                android:id="@+id/pet_detail_price_edit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
+                android:background="@android:drawable/edit_text"
                 android:gravity="right"
                 android:text="999"
                 android:textColor="#ff6633"
@@ -90,11 +82,12 @@
                     android:text="宠物种类："
                     android:textSize="20sp" />
 
-                <TextView
-                    android:id="@+id/pet_detail_topic"
+                <EditText
+                    android:id="@+id/pet_detail_topic_edit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:background="@android:drawable/edit_text"
                     android:text="种类"
                     android:textColor="#000000"
                     android:textSize="27dp" />
@@ -113,10 +106,11 @@
                     android:text="详细信息："
                     android:textSize="20sp" />
 
-                <TextView
-                    android:id="@+id/pet_detail_content"
+                <EditText
+                    android:id="@+id/pet_detail_content_edit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@android:drawable/edit_text"
                     android:text="宠物信息详情"
                     android:textColor="#000000"
                     android:textSize="22sp" />
@@ -135,17 +129,18 @@
                     android:text="是否接种疫苗："
                     android:textSize="20sp" />
 
-                <TextView
-                    android:id="@+id/pet_detail_yimiao"
+                <EditText
+                    android:id="@+id/pet_detail_yimiao_edit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="疫苗"
+                    android:background="@android:drawable/edit_text"
                     android:textColor="#000000"
                     android:textSize="22sp" />
             </LinearLayout>
             <Button
                 android:layout_weight="1"
-                android:id="@+id/pet_delete"
+                android:id="@+id/pet_detail_ok"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
@@ -153,7 +148,7 @@
                 android:layout_marginRight="30dp"
                 android:layout_marginBottom="35dp"
                 android:background="@drawable/button_circle_shape"
-                android:text="删除"
+                android:text="完成"
                 android:textSize="20dp" />
         </LinearLayout>
     </ScrollView>

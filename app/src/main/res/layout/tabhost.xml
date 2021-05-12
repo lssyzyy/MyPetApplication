@@ -60,6 +60,19 @@
                 android:orientation="vertical">
 
                 <include
+                    layout="@layout/social"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+
+            <!-- 新建3个标签页-->
+            <LinearLayout
+                android:id="@+id/tab03"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <include
                     layout="@layout/mine"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />

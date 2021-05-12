@@ -14,13 +14,21 @@ public class MyUserdataHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS user" +
-                "(id integer primary key, " +
+                "(userid integer primary key, " +
                 "username TEXT," +
                 "pwd TEXT)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS userinfo" +
+                "(username TEXT, " +
+                "userimg varchar(10000)," +
+                "nickname TEXT," +
+                "sign TEXT," +
+                "address TEXT," +
+                "FOREIGN KEY(username) REFERENCES user(username))");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("drop table if exists user");
+        db.execSQL("drop table if exists userinfo");
     }
 }

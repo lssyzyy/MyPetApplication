@@ -7,12 +7,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
 import android.provider.MediaStore;
 import android.view.Gravity;
 import android.view.View;
@@ -22,76 +21,89 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.mypetapplication.Adapter.PetAdapter;
-import com.example.mypetapplication.Bean.BeanPet;
-import com.example.mypetapplication.dataHelper.MyDatabaseHelper;
-import com.example.mypetapplication.service.SendPetToServer;
+import com.example.mypetapplication.dataHelper.MyUserdataHelper;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import static com.example.mypetapplication.MainActivity.convertIconToString;
+import static com.example.mypetapplication.MainActivity.convertStringToIcon;
 
+public class MineEditActivity extends AppCompatActivity {
 
-public class PetListAdd extends AppCompatActivity {
     private SQLiteDatabase db;
-    private PetAdapter petadapter;
-    MyDatabaseHelper helper;
-    private EditText title,name,money,content;
+    MyUserdataHelper helper;
+    EditText nickname,sign,address;
+    String username,userimg2,nickname2,address2,sign2;
     private ImageView imageview;
-    private Button btn_pet_add_ok,btn_re;
-    private List<BeanPet> petlist=new ArrayList<>();
-    private String yimiao;
-    private RadioButton checked;
     private Bitmap photo;
     private String picPath;
-    private String petdetailimg;
-    Handler handler=new Handler(){
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case SendPetToServer.SEND_SUCCESS:
-                    Toast.makeText(PetListAdd.this, "添加宠物成功", Toast.LENGTH_SHORT).show();
-                    break;
-                case SendPetToServer.SEND_FAIL:
-                    Toast.makeText(PetListAdd.this, "添加宠物失败", Toast.LENGTH_SHORT).show();
-                    break;
-
-                default:
-                    break;
-            }
-        };
-    };
+    private String userimg;
+    public static MineEditActivity instance;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.petinfoadd);
+        setContentView(R.layout.activity_useredit);
+        helper = new MyUserdataHelper(this, "userdata", null, 1);
+        db = helper.getWritableDatabase();
+        Button ok=findViewById(R.id.user_info_ok);
+        nickname=findViewById(R.id.user_nickname);
+        sign=findViewById(R.id.user_sign);
+        address=findViewById(R.id.user_address);
+        imageview =(ImageView)findViewById(R.id.user_photo);
+        Intent intent = this.getIntent();
+        username = intent.getStringExtra(MainActivity.USER_NAME2);
+        userimg2 = intent.getStringExtra(MainActivity.USER_IMG);
+        nickname2 = intent.getStringExtra(MainActivity.NICK_NAME);
+        address2 = intent.getStringExtra(MainActivity.ADDRESS);
+        sign2 = intent.getStringExtra(MainActivity.SIGN);
 
-        helper=new MyDatabaseHelper(this,"petdata",null,1);
-        db=helper.getWritableDatabase();
+        if(userimg2.length()!=0){
+            imageview.setImageBitmap(convertStringToIcon(userimg2));
+        }
+        nickname.setText(nickname2);
+        address.setText(address2);
+        sign.setText(sign2);
+        Toast.makeText(MineEditActivity.this, username, Toast.LENGTH_SHORT).show();
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(nickname.getText().toString().length()==0||sign.getText().toString().length()==0||address.getText().toString().length()==0){
+                    Toast.makeText(MineEditActivity.this,"不能为空",Toast.LENGTH_SHORT).show();
+                }else if(nickname.getText().toString().length()>10){
+                    Toast.makeText(MineEditActivity.this,"昵称长度不得超过10个字",Toast.LENGTH_SHORT).show();
+                }else{
+                    editinfo();
+                    Toast.makeText(MineEditActivity.this, "修改成功", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(MineEditActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    MainActivity.instance.finish();
+                    finish();
+                }
+            }
+        });
 
-        title=(EditText)findViewById(R.id.pet_title);
-        name=(EditText)findViewById(R.id.pet_name);
-        money=(EditText)findViewById(R.id.pet_money);
-        content=(EditText)findViewById(R.id.pet_content);
+        Button back=findViewById(R.id.edit_back);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MineEditActivity.this.finish();
+            }
+        });
 
-        imageview =(ImageView)findViewById(R.id.pet_picture);
         imageview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
                 }
-                View view = View.inflate(PetListAdd.this, R.layout.popwindow, null);
+                View view = View.inflate(MineEditActivity.this, R.layout.popwindow, null);
                 Button btn_album = view.findViewById(R.id.pop_album);
                 Button btn_camera = view.findViewById(R.id.pop_camera);
                 Button btn_cancle = view.findViewById(R.id.pop_cancel);
@@ -105,9 +117,9 @@ public class PetListAdd extends AppCompatActivity {
                         if (state.equals(Environment.MEDIA_MOUNTED)) {
                             Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
                             startActivityForResult(intent, 1);
-                            Toast.makeText(getApplicationContext(), petdetailimg,Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), userimg,Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(PetListAdd.this, "内存不可用", Toast.LENGTH_LONG).show();
+                            Toast.makeText(MineEditActivity.this, "内存不可用", Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -117,7 +129,7 @@ public class PetListAdd extends AppCompatActivity {
                     public void onClick(View v) {
                         Intent i = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                         startActivityForResult(i, 2);
-                        Toast.makeText(getApplicationContext(), petdetailimg,Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), userimg,Toast.LENGTH_SHORT).show();
                         popupwindow.dismiss();
                     }
                 });
@@ -147,51 +159,16 @@ public class PetListAdd extends AppCompatActivity {
 
         });
 
-        final RadioGroup rg=(RadioGroup)findViewById(R.id.pet_gp);
-        btn_pet_add_ok=findViewById(R.id.pet_add_ok);
-        btn_pet_add_ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(money.getText().toString().length()==0||title.getText().toString().length()==0||content.getText().toString().length()==0||name.getText().toString().length()==0){
-                    Toast.makeText(PetListAdd.this,"文本框不得有空",Toast.LENGTH_SHORT).show();
-                }else if(money.getText().toString().length()!=0&&title.getText().toString().length()!=0&&content.getText().toString().length()!=0&&name.getText().toString().length()!=0){
-                    rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(RadioGroup group, int checkedId) {
-                            RadioButton radioButton=group.findViewById(checkedId);
-                        }
-                    });
-                    checked=(RadioButton)rg.findViewById(rg.getCheckedRadioButtonId());
-                    if(checked.getText().equals("是")==true){
-                        yimiao="是";
-                    }
-                    else {
-                        yimiao="否";
-                    }
-                    Insertdata();
-                    Toast.makeText(PetListAdd.this,"添加成功",Toast.LENGTH_SHORT).show();
-                    new SendPetToServer(handler).SendPetDataToServer(title.getText().toString(),name.getText().toString(),money.getText().toString(),content.getText().toString(),yimiao);
-                    finish();
-                }
-            }
-        });
-        btn_re=findViewById(R.id.pet_add_back);
-        btn_re.setOnClickListener(new  View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                PetListAdd.this.finish();
-            }
-        });
     }
-    private void Insertdata(){
+    private void editinfo(){
+        Bitmap bitmap = ((BitmapDrawable)imageview.getDrawable()).getBitmap();
+        userimg=convertIconToString(bitmap);
         ContentValues contentValues=new ContentValues();
-        contentValues.put("petimg",petdetailimg);
-        contentValues.put("pettitle",title.getText().toString());
-        contentValues.put("pettopic",name.getText().toString());
-        contentValues.put("petprice",money.getText().toString()+"元");
-        contentValues.put("petcontent",content.getText().toString());
-        contentValues.put("petyimiao",yimiao);
-        db.insert("petsdb",null,contentValues);
+        contentValues.put("userimg",userimg);
+        contentValues.put("nickname",nickname.getText().toString());
+        contentValues.put("sign",sign.getText().toString());
+        contentValues.put("address",address.getText().toString());
+        db.update("userinfo",contentValues,"username=?",new String[]{username});
     }
     //处理图片
     @Override
@@ -226,7 +203,7 @@ public class PetListAdd extends AppCompatActivity {
                                     this.photo.compress(Bitmap.CompressFormat.JPEG,
                                             100, fileOutputStream);// 相片的完整路径
                                     this.picPath = file.getPath();
-                                    petdetailimg=convertIconToString(this.photo);
+                                    userimg=convertIconToString(this.photo);
                                     imageview.setImageBitmap(this.photo);
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -256,7 +233,7 @@ public class PetListAdd extends AppCompatActivity {
                     int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                     String picturePath = cursor.getString(columnIndex);
                     cursor.close();
-                    petdetailimg=convertIconToString(BitmapFactory.decodeFile(picturePath));
+                    userimg=convertIconToString(BitmapFactory.decodeFile(picturePath));
                     imageview.setImageBitmap(BitmapFactory.decodeFile(picturePath));
                     break;
                 }
@@ -265,5 +242,4 @@ public class PetListAdd extends AppCompatActivity {
             }
         }
     }
-
 }

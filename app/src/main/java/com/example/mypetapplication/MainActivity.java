@@ -7,6 +7,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,9 +21,9 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RadioButton;
 import android.widget.SearchView;
 import android.widget.TabHost;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -31,10 +33,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.mypetapplication.Adapter.FriendAdapter;
 import com.example.mypetapplication.Adapter.PetAdapter;
+import com.example.mypetapplication.Bean.BeanFriend;
 import com.example.mypetapplication.Bean.BeanPet;
+import com.example.mypetapplication.Bean.BeanUserInfo;
 import com.example.mypetapplication.dataHelper.MyDatabaseHelper;
+import com.example.mypetapplication.dataHelper.MyUserdataHelper;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
@@ -42,17 +52,23 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import pl.com.salsoft.sqlitestudioremote.SQLiteStudioService;
+
 public class MainActivity extends AppCompatActivity {
+    public static MainActivity instance;
     private SQLiteDatabase db;
     private DrawerLayout mDrawerLayout;
     private ListView listView;
     private PetAdapter petadapter;
     private SearchView pet_search;
-    private ImageView pet_img;
-    private Bitmap bitmap;
     MyDatabaseHelper helper;
+    MyUserdataHelper userhelper;
+    TextView nickname,address,sign,nav_headernickname,social_nickname;
+    ImageView userphoto,nav_headerimg,social_img;
+    String username1;
     Handler myhandler = new Handler();
     private List<BeanPet> petlist = new ArrayList<>();
+    private List<BeanUserInfo> userlist = new ArrayList<>();
     ArrayList<Integer> petid = new ArrayList<Integer>();
     ArrayList<String> petimg = new ArrayList<String>();
     ArrayList<String> pettitle = new ArrayList<String>();
@@ -60,6 +76,11 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> petprice = new ArrayList<String>();
     ArrayList<String> petcontent = new ArrayList<String>();
     ArrayList<String> petyimiao = new ArrayList<String>();
+    ArrayList<String> username = new ArrayList<String>();
+    ArrayList<String> userimg = new ArrayList<String>();
+    ArrayList<String> usernickname = new ArrayList<String>();
+    ArrayList<String> useradress = new ArrayList<String>();
+    ArrayList<String> usersign = new ArrayList<String>();
     public static final String PET_ID = "pet_id";
     public static final String PET_IMG = "pet_img";
     public static final String PET_TITLE = "pet_title";
@@ -67,13 +88,27 @@ public class MainActivity extends AppCompatActivity {
     public static final String PET_PRICE = "pet_price";
     public static final String PET_CONTENT = "pet_content";
     public static final String PET_YIMIAO = "pet_yimiao";
-    private RadioButton checked;
-    private static final String TAG = "图片值";
+    public static final String USER_NAME2 = "username";
+    public static final String USER_IMG = "user_img";
+    public static final String NICK_NAME = "nick_name";
+    public static final String ADDRESS = "address";
+    public static final String SIGN = "sign";
+
+    private List<BeanFriend> beanFriendList = new ArrayList<>();
+    private FriendAdapter adapter;
+    ArrayList<Integer> id = new ArrayList<Integer>();
+    ArrayList<String> friendname = new ArrayList<String>();
+    ArrayList<String> friendimg = new ArrayList<String>();
+    ArrayList<String> friendcontent = new ArrayList<String>();
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        //开启Service
+        SQLiteStudioService.instance().start(this);
+        instance = this;
         //取消严格模式  FileProvider(防止启动相机闪退)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -86,13 +121,15 @@ public class MainActivity extends AppCompatActivity {
         db = helper.getWritableDatabase();
         initDatas();
 
+        Intent intent2 = this.getIntent();
+        username1 = intent2.getStringExtra(LoginActivity.USER_NAME);
+
         FloatingActionButton button_add = findViewById(R.id.pets_add);
         button_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, PetListAdd.class);
                 startActivity(intent);
-                MainActivity.this.finish();
             }
         });
 
@@ -135,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 BeanPet petl = petlist.get(position);
                 Intent intent = new Intent(MainActivity.this, PetDetailinfoActivity.class);
-                String petid=Integer.toString(petl.getPetid());
+                String petid = String.valueOf(petl.getPetid());
                 String petimg = petl.getPetimg();
                 String pettitle = petl.getPettitle();
                 String pettopic = petl.getPettopic();
@@ -153,6 +190,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        View headerView = navView.getHeaderView(0);
+        nav_headerimg=headerView.findViewById(R.id.nav_header_pic);
+        nav_headernickname=headerView.findViewById(R.id.header_nickname);
+        social_nickname=findViewById(R.id.social_nickname);
+        social_img=findViewById(R.id.social_img);
+        social_nickname.setTextColor(Color.WHITE);
 
         //"我的"下的三个选项
         //系统设置
@@ -161,6 +204,44 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, Setting.class);
+                startActivity(intent);
+            }
+        });
+
+        userhelper = new MyUserdataHelper(this, "userdata", null, 1);
+        db = userhelper.getWritableDatabase();
+        initUserDatas();
+        userphoto=findViewById(R.id.mine_img);
+        nickname=findViewById(R.id.nickname);
+        address=findViewById(R.id.address);
+        sign=findViewById(R.id.sign);
+        for(int i=0;i<userlist.size();i++){
+            if(userlist.get(i).getUsername().equals(username1)){
+                userphoto.setImageBitmap(convertStringToIcon(userlist.get(i).getUserimg()));
+                nav_headerimg.setImageBitmap(convertStringToIcon(userlist.get(i).getUserimg()));
+                social_img.setImageBitmap(convertStringToIcon(userlist.get(i).getUserimg()));
+                nickname.setText(userlist.get(i).getNickname());
+                nav_headernickname.setText(userlist.get(i).getNickname());
+                social_nickname.setText(userlist.get(i).getNickname());
+                address.setText(userlist.get(i).getAddress());
+                sign.setText(userlist.get(i).getSign());
+                break;
+            }
+        }
+        //修改信息
+        Intent intent3 = this.getIntent();
+        final String username3 = intent3.getStringExtra(LoginActivity.USER_NAME);
+        LinearLayout btn_edit = findViewById(R.id.mine_edit);
+        btn_edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bitmap bitmap = ((BitmapDrawable)userphoto.getDrawable()).getBitmap();
+                Intent intent = new Intent(MainActivity.this, MineEditActivity.class);
+                intent.putExtra(USER_NAME2,username3);
+                intent.putExtra(USER_IMG,convertIconToString(bitmap));
+                intent.putExtra(NICK_NAME,nickname.getText().toString());
+                intent.putExtra(ADDRESS,address.getText().toString());
+                intent.putExtra(SIGN,sign.getText().toString());
                 startActivity(intent);
             }
         });
@@ -208,8 +289,40 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-    }
 
+        //宠圈界面
+        AppBarLayout appBarLayout = findViewById(R.id.appBar);
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                CollapsingToolbarLayout collapsingToolbar = findViewById(R.id.collapsing_toolbar);
+                int color = Color.argb(200,0,0,0);
+                collapsingToolbar.setCollapsedTitleTextColor(color);
+                ImageView imageView = findViewById(R.id.social_img);
+                if (Math.abs(verticalOffset) >= appBarLayout.getTotalScrollRange()) { // 折叠状态
+                    collapsingToolbar.setTitle("朋友圈");
+                    collapsingToolbar.setCollapsedTitleTextColor(Color.WHITE);
+                    imageView.setVisibility(View.GONE);
+                } else { // 非折叠状态
+                    collapsingToolbar.setTitle("");
+                    imageView.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+        //initFriends();
+        BeanFriend apple = new BeanFriend(1,"Apple", R.drawable.petfile,"apple");
+        beanFriendList.add(apple);
+        BeanFriend banana = new BeanFriend(2,"Banana", R.drawable.petfile,"banana");
+        beanFriendList.add(banana);
+
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        adapter = new FriendAdapter(beanFriendList);
+        recyclerView.setAdapter(adapter);
+
+
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -223,7 +336,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    //初始化数据
+    //初始化宠物数据
     private void initDatas() {
         petlist = queryAllContent();
         for (BeanPet d : petlist) {
@@ -238,13 +351,12 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
     public ArrayList<BeanPet> queryAllContent() {
         ArrayList<BeanPet> datas = new ArrayList<>();
         Cursor cursor = db.query("petsdb", null, null, null, null, null, null);
         while (cursor.moveToNext()) {
             BeanPet data = null;
-            int petid = cursor.getColumnIndex("id");
+            int petid = cursor.getInt(cursor.getColumnIndex("id"));
             String petimg = cursor.getString(cursor.getColumnIndex("petimg"));
             String pettitle = cursor.getString(cursor.getColumnIndex("pettitle"));
             String pettopic = cursor.getString(cursor.getColumnIndex("pettopic"));
@@ -258,15 +370,77 @@ public class MainActivity extends AppCompatActivity {
         return datas;
     }
 
+    //初始化用户数据
+    private void initUserDatas() {
+        userlist = queryUserAllContent();
+        for (BeanUserInfo d : userlist) {
+            if (d != null) {
+                username.add(d.getUsername());
+                userimg.add(d.getUserimg());
+                usernickname.add(d.getNickname());
+                useradress.add(d.getAddress());
+                usersign.add(d.getSign());
+            }
+        }
+    }
+    public ArrayList<BeanUserInfo> queryUserAllContent() {
+        ArrayList<BeanUserInfo> datas = new ArrayList<>();
+        Cursor cursor = db.query("userinfo", null, null, null, null, null, null);
+        while (cursor.moveToNext()) {
+            BeanUserInfo data = null;
+            String username = cursor.getString(cursor.getColumnIndex("username"));
+            String userimg = cursor.getString(cursor.getColumnIndex("userimg"));
+            String nickname = cursor.getString(cursor.getColumnIndex("nickname"));
+            String address = cursor.getString(cursor.getColumnIndex("address"));
+            String sign = cursor.getString(cursor.getColumnIndex("sign"));
+            data = new BeanUserInfo(username,userimg,nickname,address,sign);
+            datas.add(data);
+        }
+        cursor.close();
+        return datas;
+    }
+
+    //初始化宠圈数据
+    //    private void initFriends() {
+//        beanFriendList = queryAllContent();
+//        for (BeanFriend d : beanFriendList) {
+//            if (d != null) {
+//                id.add(d.getId());
+//                friendname.add(d.getFriendname());
+//                friendimg.add(d.getFriendimg());
+//                friendcontent.add(d.getFriendcontent());
+//            }
+//        }
+//    }
+//    public ArrayList<BeanFriend> queryAllContent() {
+//        ArrayList<BeanFriend> datas = new ArrayList<>();
+//        Cursor cursor = db.query("friendrdata", null, null, null, null, null, null);
+//        while (cursor.moveToNext()) {
+//            BeanFriend data = null;
+//            int id = cursor.getColumnIndex("id");
+//            String friendname = cursor.getString(cursor.getColumnIndex("friendname"));
+//            String friendimg = cursor.getString(cursor.getColumnIndex("friendimg"));
+//            String friendcontent = cursor.getString(cursor.getColumnIndex("friendcontent"));
+//            data = new BeanFriend(id,friendname,friendimg, friendcontent);
+//            datas.add(data);
+//        }
+//        cursor.close();
+//        return datas;
+//    }
+
+
+    //初始化宠物列表数据
     private void initTabhost() {
         final TabHost tabHost = findViewById(R.id.main);
         tabHost.setup();
 
         final TabHost.TabSpec tabSpec1 = tabHost.newTabSpec("tab1").setIndicator("首页").setContent(R.id.tab01);
-        final TabHost.TabSpec tabSpec2 = tabHost.newTabSpec("tab2").setIndicator("我的").setContent(R.id.tab02);
+        final TabHost.TabSpec tabSpec2 = tabHost.newTabSpec("tab2").setIndicator("宠圈").setContent(R.id.tab02);
+        final TabHost.TabSpec tabSpec3 = tabHost.newTabSpec("tab3").setIndicator("我的").setContent(R.id.tab03);
 
         tabHost.addTab(tabSpec1);
         tabHost.addTab(tabSpec2);
+        tabHost.addTab(tabSpec3);
         tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
             public void onTabChanged(String tabId) {
@@ -275,6 +449,9 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "首页", Toast.LENGTH_SHORT).show();
                         break;
                     case "tab2":
+                        Toast.makeText(MainActivity.this, "宠圈", Toast.LENGTH_SHORT).show();
+                        break;
+                    case "tab3":
                         Toast.makeText(MainActivity.this, "我的", Toast.LENGTH_SHORT).show();
                         break;
                 }
@@ -294,6 +471,7 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < length; i++) {
             if (pettitle.get(i).contains(data) || pettopic.get(i).contains(data) || petprice.get(i).contains(data)) {
                 BeanPet item = new BeanPet();
+                item.setPetimg(petimg.get(i));
                 item.setPettitle(pettitle.get(i));
                 item.setPettopic(pettopic.get(i));
                 item.setPetprice(petprice.get(i));

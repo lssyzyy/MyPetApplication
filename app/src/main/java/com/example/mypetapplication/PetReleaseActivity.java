@@ -18,13 +18,6 @@ import com.example.mypetapplication.dataHelper.MyDatabaseHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.mypetapplication.MainActivity.PET_CONTENT;
-import static com.example.mypetapplication.MainActivity.PET_IMG;
-import static com.example.mypetapplication.MainActivity.PET_PRICE;
-import static com.example.mypetapplication.MainActivity.PET_TITLE;
-import static com.example.mypetapplication.MainActivity.PET_TOPIC;
-import static com.example.mypetapplication.MainActivity.PET_YIMIAO;
-
 public class PetReleaseActivity  extends AppCompatActivity {
 
     private SQLiteDatabase db;
@@ -32,12 +25,21 @@ public class PetReleaseActivity  extends AppCompatActivity {
     private ListView listView;
     private PetAdapter petadapter;
     private List<BeanPet> petlist = new ArrayList<>();
+    ArrayList<Integer> petid = new ArrayList<Integer>();
     ArrayList<String> petimg = new ArrayList<String>();
     ArrayList<String> pettitle = new ArrayList<String>();
     ArrayList<String> pettopic = new ArrayList<String>();
     ArrayList<String> petprice = new ArrayList<String>();
     ArrayList<String> petcontent = new ArrayList<String>();
     ArrayList<String> petyimiao = new ArrayList<String>();
+    public static final String PET_ID2 = "pet_id";
+    public static final String PET_IMG2 = "pet_img";
+    public static final String PET_TITLE2 = "pet_title";
+    public static final String PET_TOPIC2 = "pet_topic";
+    public static final String PET_PRICE2 = "pet_price";
+    public static final String PET_CONTENT2 = "pet_content";
+    public static final String PET_YIMIAO2 = "pet_yimiao";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,20 +66,21 @@ public class PetReleaseActivity  extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 BeanPet petl = petlist.get(position);
                 Intent intent = new Intent(PetReleaseActivity.this, PetReleaseDetailinfoActivity.class);
+                String petid = String.valueOf(petl.getPetid());
                 String petimg = petl.getPetimg();
                 String pettitle = petl.getPettitle();
                 String pettopic = petl.getPettopic();
                 String petcontent = petl.getPetcontent();
                 String petprice = petl.getPetprice();
                 String petyimiao = petl.getPetyimiao();
-                intent.putExtra(PET_IMG, petimg);
-                intent.putExtra(PET_TITLE, pettitle);
-                intent.putExtra(PET_TOPIC, pettopic);
-                intent.putExtra(PET_PRICE, petprice);
-                intent.putExtra(PET_CONTENT, petcontent);
-                intent.putExtra(PET_YIMIAO, petyimiao);
+                intent.putExtra(PET_ID2, petid);
+                intent.putExtra(PET_IMG2, petimg);
+                intent.putExtra(PET_TITLE2, pettitle);
+                intent.putExtra(PET_TOPIC2, pettopic);
+                intent.putExtra(PET_PRICE2, petprice);
+                intent.putExtra(PET_CONTENT2, petcontent);
+                intent.putExtra(PET_YIMIAO2, petyimiao);
                 startActivity(intent);
-                PetReleaseActivity.this.finish();
             }
         });
     }
@@ -87,6 +90,7 @@ public class PetReleaseActivity  extends AppCompatActivity {
         petlist = queryAllContent();
         for (BeanPet d : petlist) {
             if (d != null) {
+                petid.add(d.getPetid());
                 petimg.add(d.getPetimg());
                 pettitle.add(d.getPettitle());
                 pettopic.add(d.getPettopic());
@@ -101,7 +105,7 @@ public class PetReleaseActivity  extends AppCompatActivity {
         Cursor cursor = db.query("petsdb", null, null, null, null, null, null);
         while (cursor.moveToNext()) {
             BeanPet data = null;
-            int petid = cursor.getColumnIndex("id");
+            int petid = cursor.getInt(cursor.getColumnIndex("id"));
             String petimg = cursor.getString(cursor.getColumnIndex("petimg"));
             String pettitle = cursor.getString(cursor.getColumnIndex("pettitle"));
             String pettopic = cursor.getString(cursor.getColumnIndex("pettopic"));

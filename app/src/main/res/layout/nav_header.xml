@@ -22,7 +22,7 @@
             android:layout_height="60dp"
             android:layout_marginLeft="20dp"
             android:alpha="0.8"
-            android:background="@drawable/petfile"/>
+            android:src="@drawable/petfile"/>
         <TextView
             android:id="@+id/textView10"
             android:layout_width="100dp"
@@ -40,6 +40,7 @@
             android:onClick="logout" />
     </LinearLayout>
     <TextView
+        android:id="@+id/header_nickname"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="23dp"

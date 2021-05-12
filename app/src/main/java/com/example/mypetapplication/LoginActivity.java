@@ -5,8 +5,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -33,6 +31,7 @@ public class LoginActivity extends AppCompatActivity {
     private CheckBox rem_pwd;
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
+    public static final String USER_NAME = "username";
 
     MyUserdataHelper helper;
 
@@ -84,6 +83,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (login(name,pass)){
                         Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
                         Intent user=new Intent(LoginActivity.this,MainActivity.class);
+                        user.putExtra(USER_NAME,username.getText().toString());
                         startActivity(user);
                         finish();
                         if(rem_pwd.isChecked()){
