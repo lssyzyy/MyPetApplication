@@ -29,7 +29,6 @@
             android:text="详细信息"
             android:textColor="#000000"
             android:textSize="25dp" />
-
         <Button
             android:id="@+id/release_edit"
             android:layout_width="40dp"
