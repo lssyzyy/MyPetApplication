@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="spinnerarr">
+        <item>猫科</item>
+        <item>犬科</item>
+        <item>爬行类</item>
+        <item>小宠物类</item>
+        <item>水族类</item>
+    </string-array>
+</resources>

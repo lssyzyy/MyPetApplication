@@ -153,6 +153,8 @@ public class PetListAdd extends AppCompatActivity {
             public void onClick(View view) {
                 if(money.getText().toString().length()==0||title.getText().toString().length()==0||content.getText().toString().length()==0||name.getText().toString().length()==0){
                     Toast.makeText(PetListAdd.this,"文本框不得有空",Toast.LENGTH_SHORT).show();
+                }else if(imageview.getDrawable().getCurrent().getConstantState()==null){
+                    Toast.makeText(PetListAdd.this,"图片不能为空",Toast.LENGTH_SHORT).show();
                 }else if(money.getText().toString().length()!=0&&title.getText().toString().length()!=0&&content.getText().toString().length()!=0&&name.getText().toString().length()!=0){
                     rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                         @Override
@@ -174,8 +176,6 @@ public class PetListAdd extends AppCompatActivity {
                     startActivity(intent);
                     MainActivity.instance.finish();
                     finish();
-                }else if(imageview==null){
-                    Toast.makeText(PetListAdd.this,"图片不能为空",Toast.LENGTH_SHORT).show();
                 }
             }
         });
