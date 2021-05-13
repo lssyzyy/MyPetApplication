@@ -8,8 +8,9 @@ public class BeanPet {
     private String petprice;
     private String petcontent;
     private String petyimiao;
+    private String petusername;
     public BeanPet(){};
-    public BeanPet(int petid,String petimg,String pettitle,String pettopic,String petprice,String petcontent,String petyimiao){
+    public BeanPet(int petid,String petimg,String pettitle,String pettopic,String petprice,String petcontent,String petyimiao,String petusername){
         this.petid=petid;
         this.petimg=petimg;
         this.pettitle=pettitle;
@@ -17,6 +18,7 @@ public class BeanPet {
         this.petprice=petprice;
         this.petcontent=petcontent;
         this.petyimiao=petyimiao;
+        this.petusername=petusername;
     }
 
     public int getPetid() {
@@ -75,4 +77,11 @@ public class BeanPet {
         this.petyimiao = petyimiao;
     }
 
+    public String getPetusername() {
+        return petusername;
+    }
+
+    public void setPetusername(String username) {
+        this.petusername = petusername;
+    }
 }

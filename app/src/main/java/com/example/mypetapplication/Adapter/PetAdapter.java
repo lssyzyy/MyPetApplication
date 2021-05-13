@@ -62,6 +62,10 @@ public class PetAdapter extends ArrayAdapter {
         viewHolder.img.setImageBitmap(bitmap);
         return convertView;
     }
+    public void onDateChange(List<BeanPet> list) {
+        this.objects = list;
+        this.notifyDataSetChanged();
+    }
     public static class ViewHolder2{
         ImageView img;
         TextView title;

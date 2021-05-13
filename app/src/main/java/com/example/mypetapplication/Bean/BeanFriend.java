@@ -3,15 +3,19 @@ package com.example.mypetapplication.Bean;
 public class BeanFriend {
     private int id;
     private String friendname;
-    private int friendimg;
+    private String friendnickname;
+    private String friendimg;
     private String friendcontent;
+    private String friendcontentimg;
 
     public BeanFriend(){};
-    public BeanFriend(int id, String friendname, int friendimg, String friendcontent){
+    public BeanFriend(int id, String friendname,String friendnickname, String friendimg, String friendcontent,String friendcontentimg){
         this.id=id;
         this.friendname=friendname;
+        this.friendnickname=friendnickname;
         this.friendimg=friendimg;
         this.friendcontent=friendcontent;
+        this.friendcontentimg=friendcontentimg;
     }
 
     public int getId() {
@@ -30,11 +34,19 @@ public class BeanFriend {
         this.friendname = friendname;
     }
 
-    public int getFriendimg() {
+    public String getFriendnickname() {
+        return friendnickname;
+    }
+
+    public void setFriendnickname(String friendnickname) {
+        this.friendnickname = friendnickname;
+    }
+
+    public String getFriendimg() {
         return friendimg;
     }
 
-    public void setFriendimg(int friendimg) {
+    public void setFriendimg(String friendimg) {
         this.friendimg = friendimg;
     }
 
@@ -44,5 +56,13 @@ public class BeanFriend {
 
     public void setFriendcontent(String friendcontent) {
         this.friendcontent = friendcontent;
+    }
+
+    public String getFriendcontentimg() {
+        return friendcontentimg;
+    }
+
+    public void setFriendcontentimg(String friendcontentimg) {
+        this.friendcontentimg = friendcontentimg;
     }
 }

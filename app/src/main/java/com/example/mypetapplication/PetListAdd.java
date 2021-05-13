@@ -3,6 +3,7 @@ package com.example.mypetapplication;
 import android.Manifest;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -28,7 +29,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.mypetapplication.Adapter.PetAdapter;
 import com.example.mypetapplication.Bean.BeanPet;
 import com.example.mypetapplication.dataHelper.MyDatabaseHelper;
 import com.example.mypetapplication.service.SendPetToServer;
@@ -45,7 +45,6 @@ import static com.example.mypetapplication.MainActivity.convertIconToString;
 
 public class PetListAdd extends AppCompatActivity {
     private SQLiteDatabase db;
-    private PetAdapter petadapter;
     MyDatabaseHelper helper;
     private EditText title,name,money,content;
     private ImageView imageview;
@@ -171,7 +170,12 @@ public class PetListAdd extends AppCompatActivity {
                     Insertdata();
                     Toast.makeText(PetListAdd.this,"添加成功",Toast.LENGTH_SHORT).show();
                     new SendPetToServer(handler).SendPetDataToServer(title.getText().toString(),name.getText().toString(),money.getText().toString(),content.getText().toString(),yimiao);
+                    Intent intent = new Intent(PetListAdd.this, MainActivity.class);
+                    startActivity(intent);
+                    MainActivity.instance.finish();
                     finish();
+                }else if(imageview==null){
+                    Toast.makeText(PetListAdd.this,"图片不能为空",Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -184,6 +188,8 @@ public class PetListAdd extends AppCompatActivity {
         });
     }
     private void Insertdata(){
+        SharedPreferences settings = getSharedPreferences("UserInfo", 0);
+        String petusername = settings.getString("Username", "").toString();
         ContentValues contentValues=new ContentValues();
         contentValues.put("petimg",petdetailimg);
         contentValues.put("pettitle",title.getText().toString());
@@ -191,6 +197,7 @@ public class PetListAdd extends AppCompatActivity {
         contentValues.put("petprice",money.getText().toString()+"元");
         contentValues.put("petcontent",content.getText().toString());
         contentValues.put("petyimiao",yimiao);
+        contentValues.put("petusername",petusername);
         db.insert("petsdb",null,contentValues);
     }
     //处理图片

@@ -73,7 +73,10 @@
             android:theme="@style/AppTheme.NoActionBar"  />
         <activity
             android:name=".PetReleaseDetailInfoEditActivity"
-            android:theme="@style/AppTheme.NoActionBar"   />
+            android:theme="@style/AppTheme.NoActionBar"  />
+        <activity
+            android:name=".SocialAddActivity"
+            android:theme="@style/AppTheme.NoActionBar"  />
     </application>
 
 </manifest>

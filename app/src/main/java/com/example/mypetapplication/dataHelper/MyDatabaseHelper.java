@@ -20,7 +20,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
                 "pettopic text," +
                 "petprice text," +
                 "petcontent text," +
-                "petyimiao text)");
+                "petyimiao text," +
+                "petusername text)");
         db.execSQL("CREATE TABLE IF NOT EXISTS petsadopt" +
                 "(id integer primary key, " +
                 "petimg varchar(10000),"+
@@ -28,7 +29,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
                 "pettopic text," +
                 "petprice text," +
                 "petcontent text," +
-                "petyimiao text)");
+                "petyimiao text," +
+                "petusername text)");
     }
 
     @Override

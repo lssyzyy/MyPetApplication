@@ -31,7 +31,6 @@ public class LoginActivity extends AppCompatActivity {
     private CheckBox rem_pwd;
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
-    public static final String USER_NAME = "username";
 
     MyUserdataHelper helper;
 
@@ -77,13 +76,16 @@ public class LoginActivity extends AppCompatActivity {
                 String name=username.getText().toString();
                 String pass=pwd.getText().toString();
                 editor=pref.edit();
-                if(username.equals("")||pwd.equals("")){
+                if(name.length()==0||pass.length()==0){
                     Toast.makeText(LoginActivity.this, "账号或密码不能为空", Toast.LENGTH_LONG).show();
                 }else {
                     if (login(name,pass)){
                         Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
                         Intent user=new Intent(LoginActivity.this,MainActivity.class);
-                        user.putExtra(USER_NAME,username.getText().toString());
+                        SharedPreferences settings = getSharedPreferences("UserInfo", 0);
+                        SharedPreferences.Editor editor1 = settings.edit();
+                        editor1.putString("Username",username.getText().toString());
+                        editor1.commit();
                         startActivity(user);
                         finish();
                         if(rem_pwd.isChecked()){

@@ -3,11 +3,11 @@ package com.example.mypetapplication;
 import android.Manifest;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,83 +25,71 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.mypetapplication.dataHelper.MyDatabaseHelper;
+import com.example.mypetapplication.Bean.BeanUserInfo;
+import com.example.mypetapplication.dataHelper.MyFrienddataHelper;
+import com.example.mypetapplication.dataHelper.MyUserdataHelper;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static com.example.mypetapplication.MainActivity.convertIconToString;
-import static com.example.mypetapplication.MainActivity.convertStringToIcon;
 
-public class PetReleaseDetailInfoEditActivity extends AppCompatActivity {
+public class SocialAddActivity extends AppCompatActivity {
 
-    private EditText pet_detail_title_edit,pet_detail_price_edit,pet_detail_topic_edit,pet_detail_content_edit,pet_detail_yimiao_edit;
-    private ImageView pet_detail_img_edit;
-    private String pet_id;
-    private String pet_img;
+    private SQLiteDatabase db;
+    MyFrienddataHelper helper;
+    MyUserdataHelper userhelper;
+    private ImageView social_img;
+    private Button social_add_ok;
+    private EditText social_think;
     private Bitmap photo;
     private String picPath;
-    private SQLiteDatabase db;
-    private Button back;
-    MyDatabaseHelper helper;
+    private String friend_img;
+    private String friend_name;
+    private String friend_content_img;
+    private String username1;
+    private List<BeanUserInfo> userlist = new ArrayList<>();
+    ArrayList<String> username = new ArrayList<String>();
+    ArrayList<String> userimg = new ArrayList<String>();
+    ArrayList<String> usernickname = new ArrayList<String>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pet_release_detail_info_edit);
+        setContentView(R.layout.activity_social_add);
 
-        helper = new MyDatabaseHelper(this, "petdata", null, 1);
-        db = helper.getWritableDatabase();
-        pet_detail_img_edit=findViewById(R.id.pet_detail_img_edit);
-        pet_detail_title_edit=findViewById(R.id.pet_detail_title_edit);
-        pet_detail_price_edit=findViewById(R.id.pet_detail_price_edit);
-        pet_detail_topic_edit=findViewById(R.id.pet_detail_topic_edit);
-        pet_detail_content_edit=findViewById(R.id.pet_detail_content_edit);
-        pet_detail_yimiao_edit=findViewById(R.id.pet_detail_yimiao_edit);
-        Intent intent = this.getIntent();
-        pet_id=intent.getStringExtra(PetReleaseDetailinfoActivity.PET_DETAIL_ID);
-        pet_img=intent.getStringExtra(PetReleaseDetailinfoActivity.PET_DETAIL_IMG);
-        String pet_title=intent.getStringExtra(PetReleaseDetailinfoActivity.PET_DETAIL_TITLE);
-        String pet_price=intent.getStringExtra(PetReleaseDetailinfoActivity.PET_DETAIL_PRICE);
-        String pet_topic=intent.getStringExtra(PetReleaseDetailinfoActivity.PET_DETAIL_TOPIC);
-        String pet_content=intent.getStringExtra(PetReleaseDetailinfoActivity.PET_DETAIL_CONTENT);
-        String pet_yimiao=intent.getStringExtra(PetReleaseDetailinfoActivity.PET_DETAIL_YIMIAO);
-        Bitmap bitmap=convertStringToIcon(pet_img);
-        pet_detail_img_edit.setImageBitmap(bitmap);
-        pet_detail_title_edit.setText(pet_title);
-        pet_detail_price_edit.setText(pet_price);
-        pet_detail_topic_edit.setText(pet_topic);
-        pet_detail_content_edit.setText(pet_content);
-        pet_detail_yimiao_edit.setText(pet_yimiao);
-
-        Button pet_detail_ok=findViewById(R.id.pet_detail_ok);
-        pet_detail_ok.setOnClickListener(new View.OnClickListener() {
+        userhelper = new MyUserdataHelper(this, "userdata", null, 1);
+        db=userhelper.getWritableDatabase();
+        initUserDatas();
+        Button back=findViewById(R.id.social_add_back);
+        back.setOnClickListener(new  View.OnClickListener(){
             @Override
-            public void onClick(View v) {
-                editpetdetailinfo();
-                Toast.makeText(PetReleaseDetailInfoEditActivity.this,"修改成功",Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(PetReleaseDetailInfoEditActivity.this, PetReleaseActivity.class);
-                startActivity(intent);
-                PetReleaseActivity.instance1.finish();
-                finish();
-            }
-        });
-        back=findViewById(R.id.pet_detail_edit_back);
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
+            public void onClick(View v){
+                SocialAddActivity.this.finish();
             }
         });
 
-        pet_detail_img_edit.setOnClickListener(new View.OnClickListener() {
+
+        SharedPreferences settings = getSharedPreferences("UserInfo", 0);
+        username1 = settings.getString("Username", "").toString();;
+        for(int i=0;i<userlist.size();i++){
+            if(userlist.get(i).getUsername().equals(username1)){
+                friend_name=userlist.get(i).getNickname();
+                friend_img=userlist.get(i).getUserimg();
+            }
+        }
+
+        social_img=findViewById(R.id.social_img);
+        social_img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
                 }
-                View view = View.inflate(PetReleaseDetailInfoEditActivity.this, R.layout.popwindow, null);
+                View view = View.inflate(SocialAddActivity.this, R.layout.popwindow, null);
                 Button btn_album = view.findViewById(R.id.pop_album);
                 Button btn_camera = view.findViewById(R.id.pop_camera);
                 Button btn_cancle = view.findViewById(R.id.pop_cancel);
@@ -115,9 +103,9 @@ public class PetReleaseDetailInfoEditActivity extends AppCompatActivity {
                         if (state.equals(Environment.MEDIA_MOUNTED)) {
                             Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
                             startActivityForResult(intent, 1);
-                            Toast.makeText(getApplicationContext(), pet_img,Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), friend_content_img,Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(PetReleaseDetailInfoEditActivity.this, "内存不可用", Toast.LENGTH_LONG).show();
+                            Toast.makeText(SocialAddActivity.this, "内存不可用", Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -127,7 +115,7 @@ public class PetReleaseDetailInfoEditActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         Intent i = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                         startActivityForResult(i, 2);
-                        Toast.makeText(getApplicationContext(), pet_img,Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), friend_content_img,Toast.LENGTH_SHORT).show();
                         popupwindow.dismiss();
                     }
                 });
@@ -155,19 +143,63 @@ public class PetReleaseDetailInfoEditActivity extends AppCompatActivity {
                 popupwindow.showAtLocation(view, Gravity.BOTTOM,0,50);
             }
         });
+
+        social_add_ok=findViewById(R.id.social_add_ok);
+        social_add_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(social_think.getText().toString().length()==0){
+                    Toast.makeText(SocialAddActivity.this,"发表内容不能为空",Toast.LENGTH_SHORT).show();
+                }else{
+                    insertsocial();
+                    Toast.makeText(SocialAddActivity.this,"发布成功",Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(SocialAddActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    MainActivity.instance.finish();
+                    finish();
+                }
+            }
+        });
+        social_think=findViewById(R.id.social_think);
     }
 
-    private void editpetdetailinfo(){
-        Bitmap bitmap = ((BitmapDrawable)pet_detail_img_edit.getDrawable()).getBitmap();
-        pet_img=convertIconToString(bitmap);
+    private void insertsocial(){
+        helper=new MyFrienddataHelper(this,"frienddata",null,1);
+        db=helper.getWritableDatabase();
         ContentValues contentValues=new ContentValues();
-        contentValues.put("petimg",pet_img);
-        contentValues.put("pettitle",pet_detail_title_edit.getText().toString());
-        contentValues.put("pettopic",pet_detail_topic_edit.getText().toString());
-        contentValues.put("petprice",pet_detail_price_edit.getText().toString());
-        contentValues.put("petcontent",pet_detail_content_edit.getText().toString());
-        contentValues.put("petyimiao",pet_detail_yimiao_edit.getText().toString());
-        db.update("petsdb",contentValues,"id=?",new String[]{pet_id});
+        contentValues.put("friendimg",friend_img);
+        contentValues.put("friendnickname",friend_name);
+        contentValues.put("friendname",username1);
+        contentValues.put("friendcontent",social_think.getText().toString());
+        contentValues.put("friendcontentimg",friend_content_img);
+        db.insert("friend",null,contentValues);
+    }
+    //初始化用户数据
+    private void initUserDatas() {
+        userlist = queryUserAllContent();
+        for (BeanUserInfo d : userlist) {
+            if (d != null) {
+                username.add(d.getUsername());
+                userimg.add(d.getUserimg());
+                usernickname.add(d.getNickname());
+            }
+        }
+    }
+    public ArrayList<BeanUserInfo> queryUserAllContent() {
+        ArrayList<BeanUserInfo> datas = new ArrayList<>();
+        Cursor cursor = db.query("userinfo", null, null, null, null, null, null);
+        while (cursor.moveToNext()) {
+            BeanUserInfo data = null;
+            String username = cursor.getString(cursor.getColumnIndex("username"));
+            String userimg = cursor.getString(cursor.getColumnIndex("userimg"));
+            String nickname = cursor.getString(cursor.getColumnIndex("nickname"));
+            String address = cursor.getString(cursor.getColumnIndex("address"));
+            String sign = cursor.getString(cursor.getColumnIndex("sign"));
+            data = new BeanUserInfo(username,userimg,nickname,address,sign);
+            datas.add(data);
+        }
+        cursor.close();
+        return datas;
     }
     //处理图片
     @Override
@@ -202,8 +234,8 @@ public class PetReleaseDetailInfoEditActivity extends AppCompatActivity {
                                     this.photo.compress(Bitmap.CompressFormat.JPEG,
                                             100, fileOutputStream);// 相片的完整路径
                                     this.picPath = file.getPath();
-                                    pet_img=convertIconToString(this.photo);
-                                    pet_detail_img_edit.setImageBitmap(this.photo);
+                                    friend_content_img=convertIconToString(this.photo);
+                                    social_img.setImageBitmap(this.photo);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 } finally {
@@ -232,8 +264,8 @@ public class PetReleaseDetailInfoEditActivity extends AppCompatActivity {
                     int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                     String picturePath = cursor.getString(columnIndex);
                     cursor.close();
-                    pet_img=convertIconToString(BitmapFactory.decodeFile(picturePath));
-                    pet_detail_img_edit.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+                    friend_content_img=convertIconToString(BitmapFactory.decodeFile(picturePath));
+                    social_img.setImageBitmap(BitmapFactory.decodeFile(picturePath));
                     break;
                 }
                 default:

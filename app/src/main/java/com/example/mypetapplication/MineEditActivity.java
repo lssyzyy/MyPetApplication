@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.mypetapplication.dataHelper.MyFrienddataHelper;
 import com.example.mypetapplication.dataHelper.MyUserdataHelper;
 
 import java.io.File;
@@ -39,6 +40,7 @@ public class MineEditActivity extends AppCompatActivity {
 
     private SQLiteDatabase db;
     MyUserdataHelper helper;
+    MyFrienddataHelper friendhelper;
     EditText nickname,sign,address;
     String username,userimg2,nickname2,address2,sign2;
     private ImageView imageview;
@@ -80,8 +82,9 @@ public class MineEditActivity extends AppCompatActivity {
                     Toast.makeText(MineEditActivity.this,"昵称长度不得超过10个字",Toast.LENGTH_SHORT).show();
                 }else{
                     editinfo();
+                    updatefriend();
                     Toast.makeText(MineEditActivity.this, "修改成功", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(MineEditActivity.this, LoginActivity.class);
+                    Intent intent = new Intent(MineEditActivity.this, MainActivity.class);
                     startActivity(intent);
                     MainActivity.instance.finish();
                     finish();
@@ -169,6 +172,16 @@ public class MineEditActivity extends AppCompatActivity {
         contentValues.put("sign",sign.getText().toString());
         contentValues.put("address",address.getText().toString());
         db.update("userinfo",contentValues,"username=?",new String[]{username});
+    }
+    private void updatefriend(){
+        friendhelper=new MyFrienddataHelper(this,"frienddata",null,1);
+        db=friendhelper.getWritableDatabase();
+        Bitmap bitmap = ((BitmapDrawable)imageview.getDrawable()).getBitmap();
+        userimg=convertIconToString(bitmap);
+        ContentValues contentValues=new ContentValues();
+        contentValues.put("friendimg",userimg);
+        contentValues.put("friendnickname",nickname.getText().toString());
+        db.update("friend",contentValues,"friendname=?",new String[]{username});
     }
     //处理图片
     @Override

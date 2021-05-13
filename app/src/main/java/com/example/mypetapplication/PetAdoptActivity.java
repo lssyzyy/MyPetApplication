@@ -1,11 +1,10 @@
 package com.example.mypetapplication;
 
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -30,6 +29,7 @@ public class PetAdoptActivity extends AppCompatActivity {
     ArrayList<String> petprice = new ArrayList<String>();
     ArrayList<String> petcontent = new ArrayList<String>();
     ArrayList<String> petyimiao = new ArrayList<String>();
+    ArrayList<String> petusername = new ArrayList<String>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,12 +62,15 @@ public class PetAdoptActivity extends AppCompatActivity {
                 petprice.add(d.getPetprice());
                 petcontent.add(d.getPetcontent());
                 petyimiao.add(d.getPetyimiao());
+                petusername.add(d.getPetusername());
             }
         }
     }
     public ArrayList<BeanPet> queryAllContent() {
+        SharedPreferences settings = getSharedPreferences("UserInfo", 0);
+        String petusername1 = settings.getString("Username", "").toString();
         ArrayList<BeanPet> datas = new ArrayList<>();
-        Cursor cursor = db.query("petsadopt", null, null, null, null, null, null);
+        Cursor cursor = db.query("petsadopt", null, "petusername=?", new String[]{petusername1}, null, null, null);
         while (cursor.moveToNext()) {
             BeanPet data = null;
             int petid = cursor.getColumnIndex("id");
@@ -77,7 +80,8 @@ public class PetAdoptActivity extends AppCompatActivity {
             String petprice = cursor.getString(cursor.getColumnIndex("petprice"));
             String petcontent = cursor.getString(cursor.getColumnIndex("petcontent"));
             String petyimiao = cursor.getString(cursor.getColumnIndex("petyimiao"));
-            data = new BeanPet(petid,petimg,pettitle, pettopic, petprice, petcontent,petyimiao);
+            String petusername = cursor.getString(cursor.getColumnIndex("petusername"));
+            data = new BeanPet(petid,petimg,pettitle, pettopic, petprice, petcontent,petyimiao,petusername);
             datas.add(data);
         }
         cursor.close();

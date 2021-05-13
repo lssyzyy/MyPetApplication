@@ -3,6 +3,7 @@ package com.example.mypetapplication;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -75,7 +76,9 @@ public class PetDetailinfoActivity extends AppCompatActivity {
                                 petadopt(pet_title);
                                 dialog.dismiss();
                                 Toast.makeText(PetDetailinfoActivity.this,"领养成功",Toast.LENGTH_SHORT).show();
-                                PetDetailinfoActivity.this.finish();
+                                Intent intent = new Intent(PetDetailinfoActivity.this, MainActivity.class);
+                                startActivity(intent);
+                                MainActivity.instance.finish();
                             }
                         })
                         .setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -94,6 +97,8 @@ public class PetDetailinfoActivity extends AppCompatActivity {
         SQLiteDatabase db=helper.getWritableDatabase();
         db.delete("petsdb","pettitle=?",new String[]{pettitle});
         Bitmap bitmap = ((BitmapDrawable)pet_detail_img.getDrawable()).getBitmap();
+        SharedPreferences settings = getSharedPreferences("UserInfo", 0);
+        String petusername = settings.getString("Username", "").toString();
         ContentValues contentValues=new ContentValues();
         contentValues.put("petimg",convertIconToString(bitmap));
         contentValues.put("pettitle",pet_detail_title.getText().toString());
@@ -101,6 +106,7 @@ public class PetDetailinfoActivity extends AppCompatActivity {
         contentValues.put("petprice",pet_detail_price.getText().toString());
         contentValues.put("petcontent",pet_detail_content.getText().toString());
         contentValues.put("petyimiao",pet_detail_yimiao.getText().toString());
+        contentValues.put("petusername",petusername);
         db.insert("petsadopt",null,contentValues);
     }
 }

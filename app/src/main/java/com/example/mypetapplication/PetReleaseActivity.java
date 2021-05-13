@@ -1,6 +1,7 @@
 package com.example.mypetapplication;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import java.util.List;
 
 public class PetReleaseActivity  extends AppCompatActivity {
 
+    public static PetReleaseActivity instance1;
     private SQLiteDatabase db;
     MyDatabaseHelper helper;
     private ListView listView;
@@ -32,6 +34,7 @@ public class PetReleaseActivity  extends AppCompatActivity {
     ArrayList<String> petprice = new ArrayList<String>();
     ArrayList<String> petcontent = new ArrayList<String>();
     ArrayList<String> petyimiao = new ArrayList<String>();
+    ArrayList<String> petusername = new ArrayList<String>();
     public static final String PET_ID2 = "pet_id";
     public static final String PET_IMG2 = "pet_img";
     public static final String PET_TITLE2 = "pet_title";
@@ -44,7 +47,7 @@ public class PetReleaseActivity  extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_release);
-
+        instance1=this;
         helper = new MyDatabaseHelper(this, "petdata", null, 1);
         db = helper.getWritableDatabase();
         initDatas();
@@ -97,12 +100,15 @@ public class PetReleaseActivity  extends AppCompatActivity {
                 petprice.add(d.getPetprice());
                 petcontent.add(d.getPetcontent());
                 petyimiao.add(d.getPetyimiao());
+                petusername.add(d.getPetusername());
             }
         }
     }
     public ArrayList<BeanPet> queryAllContent() {
+        SharedPreferences settings = getSharedPreferences("UserInfo", 0);
+        String petusername1 = settings.getString("Username", "").toString();
         ArrayList<BeanPet> datas = new ArrayList<>();
-        Cursor cursor = db.query("petsdb", null, null, null, null, null, null);
+        Cursor cursor = db.query("petsdb", null, "petusername=?", new String[]{petusername1}, null, null, null);
         while (cursor.moveToNext()) {
             BeanPet data = null;
             int petid = cursor.getInt(cursor.getColumnIndex("id"));
@@ -112,7 +118,8 @@ public class PetReleaseActivity  extends AppCompatActivity {
             String petprice = cursor.getString(cursor.getColumnIndex("petprice"));
             String petcontent = cursor.getString(cursor.getColumnIndex("petcontent"));
             String petyimiao = cursor.getString(cursor.getColumnIndex("petyimiao"));
-            data = new BeanPet(petid,petimg,pettitle, pettopic, petprice, petcontent,petyimiao);
+            String petusername = cursor.getString(cursor.getColumnIndex("petusername"));
+            data = new BeanPet(petid,petimg,pettitle, pettopic, petprice, petcontent,petyimiao,petusername);
             datas.add(data);
         }
         cursor.close();

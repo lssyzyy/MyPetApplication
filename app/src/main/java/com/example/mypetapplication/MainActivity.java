@@ -3,6 +3,7 @@ package com.example.mypetapplication;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -14,10 +15,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.util.Base64;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -33,8 +36,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mypetapplication.Adapter.FriendAdapter;
 import com.example.mypetapplication.Adapter.PetAdapter;
@@ -42,6 +43,7 @@ import com.example.mypetapplication.Bean.BeanFriend;
 import com.example.mypetapplication.Bean.BeanPet;
 import com.example.mypetapplication.Bean.BeanUserInfo;
 import com.example.mypetapplication.dataHelper.MyDatabaseHelper;
+import com.example.mypetapplication.dataHelper.MyFrienddataHelper;
 import com.example.mypetapplication.dataHelper.MyUserdataHelper;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
@@ -50,6 +52,7 @@ import com.google.android.material.navigation.NavigationView;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import pl.com.salsoft.sqlitestudioremote.SQLiteStudioService;
@@ -63,9 +66,13 @@ public class MainActivity extends AppCompatActivity {
     private SearchView pet_search;
     MyDatabaseHelper helper;
     MyUserdataHelper userhelper;
+    MyFrienddataHelper socialhelper;
+    private TabHost tabHost;
     TextView nickname,address,sign,nav_headernickname,social_nickname;
     ImageView userphoto,nav_headerimg,social_img;
     String username1;
+    private Bitmap bitmap;
+    private String nickname3;
     Handler myhandler = new Handler();
     private List<BeanPet> petlist = new ArrayList<>();
     private List<BeanUserInfo> userlist = new ArrayList<>();
@@ -76,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> petprice = new ArrayList<String>();
     ArrayList<String> petcontent = new ArrayList<String>();
     ArrayList<String> petyimiao = new ArrayList<String>();
+    ArrayList<String> petusername = new ArrayList<String>();
     ArrayList<String> username = new ArrayList<String>();
     ArrayList<String> userimg = new ArrayList<String>();
     ArrayList<String> usernickname = new ArrayList<String>();
@@ -98,8 +106,10 @@ public class MainActivity extends AppCompatActivity {
     private FriendAdapter adapter;
     ArrayList<Integer> id = new ArrayList<Integer>();
     ArrayList<String> friendname = new ArrayList<String>();
+    ArrayList<String> friendnickname = new ArrayList<String>();
     ArrayList<String> friendimg = new ArrayList<String>();
     ArrayList<String> friendcontent = new ArrayList<String>();
+    ArrayList<String> friendcontentimg = new ArrayList<String>();
 
 
     @Override
@@ -116,13 +126,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         initTabhost();
-
         helper = new MyDatabaseHelper(this, "petdata", null, 1);
         db = helper.getWritableDatabase();
         initDatas();
 
-        Intent intent2 = this.getIntent();
-        username1 = intent2.getStringExtra(LoginActivity.USER_NAME);
+        SharedPreferences settings = getSharedPreferences("UserInfo", 0);
+        username1 = settings.getString("Username", "").toString();;
 
         FloatingActionButton button_add = findViewById(R.id.pets_add);
         button_add.setOnClickListener(new View.OnClickListener() {
@@ -228,14 +237,13 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
         }
+        bitmap = ((BitmapDrawable)userphoto.getDrawable()).getBitmap();
         //修改信息
-        Intent intent3 = this.getIntent();
-        final String username3 = intent3.getStringExtra(LoginActivity.USER_NAME);
+        final String username3 = settings.getString("Username", "").toString();
         LinearLayout btn_edit = findViewById(R.id.mine_edit);
         btn_edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Bitmap bitmap = ((BitmapDrawable)userphoto.getDrawable()).getBitmap();
                 Intent intent = new Intent(MainActivity.this, MineEditActivity.class);
                 intent.putExtra(USER_NAME2,username3);
                 intent.putExtra(USER_IMG,convertIconToString(bitmap));
@@ -296,12 +304,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
                 CollapsingToolbarLayout collapsingToolbar = findViewById(R.id.collapsing_toolbar);
-                int color = Color.argb(200,0,0,0);
+                int color = Color.argb(0,0,0,0);
                 collapsingToolbar.setCollapsedTitleTextColor(color);
                 ImageView imageView = findViewById(R.id.social_img);
                 if (Math.abs(verticalOffset) >= appBarLayout.getTotalScrollRange()) { // 折叠状态
-                    collapsingToolbar.setTitle("朋友圈");
-                    collapsingToolbar.setCollapsedTitleTextColor(Color.WHITE);
+                    collapsingToolbar.setCollapsedTitleGravity(Gravity.CENTER);
                     imageView.setVisibility(View.GONE);
                 } else { // 非折叠状态
                     collapsingToolbar.setTitle("");
@@ -309,19 +316,31 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        //initFriends();
-        BeanFriend apple = new BeanFriend(1,"Apple", R.drawable.petfile,"apple");
-        beanFriendList.add(apple);
-        BeanFriend banana = new BeanFriend(2,"Banana", R.drawable.petfile,"banana");
-        beanFriendList.add(banana);
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        adapter = new FriendAdapter(beanFriendList);
-        recyclerView.setAdapter(adapter);
+        socialhelper = new MyFrienddataHelper(this, "frienddata", null, 1);
+        db = socialhelper.getWritableDatabase();
+        initFriends();
 
+        ListView social_list = findViewById(R.id.social_list);
+        Collections.reverse(beanFriendList);
+        adapter = new FriendAdapter(this, R.layout.social_item, beanFriendList);
+        social_list.setAdapter(adapter);
+        social_list.setTextFilterEnabled(true);
+        adapter.notifyDataSetChanged();
+        for(int i=0;i<userlist.size();i++){
+            if(username3.equals(userlist.get(i).getUsername())){
+                nickname3=userlist.get(i).getNickname();
+            }
+        }
 
+        Button socialadd=findViewById(R.id.social_add);
+        socialadd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, SocialAddActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -348,6 +367,7 @@ public class MainActivity extends AppCompatActivity {
                 petprice.add(d.getPetprice());
                 petcontent.add(d.getPetcontent());
                 petyimiao.add(d.getPetyimiao());
+                petusername.add(d.getPetusername());
             }
         }
     }
@@ -363,7 +383,8 @@ public class MainActivity extends AppCompatActivity {
             String petprice = cursor.getString(cursor.getColumnIndex("petprice"));
             String petcontent = cursor.getString(cursor.getColumnIndex("petcontent"));
             String petyimiao = cursor.getString(cursor.getColumnIndex("petyimiao"));
-            data = new BeanPet(petid,petimg,pettitle, pettopic, petprice, petcontent,petyimiao);
+            String petusername = cursor.getString(cursor.getColumnIndex("petusername"));
+            data = new BeanPet(petid,petimg,pettitle, pettopic, petprice, petcontent,petyimiao,petusername);
             datas.add(data);
         }
         cursor.close();
@@ -401,37 +422,41 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //初始化宠圈数据
-    //    private void initFriends() {
-//        beanFriendList = queryAllContent();
-//        for (BeanFriend d : beanFriendList) {
-//            if (d != null) {
-//                id.add(d.getId());
-//                friendname.add(d.getFriendname());
-//                friendimg.add(d.getFriendimg());
-//                friendcontent.add(d.getFriendcontent());
-//            }
-//        }
-//    }
-//    public ArrayList<BeanFriend> queryAllContent() {
-//        ArrayList<BeanFriend> datas = new ArrayList<>();
-//        Cursor cursor = db.query("friendrdata", null, null, null, null, null, null);
-//        while (cursor.moveToNext()) {
-//            BeanFriend data = null;
-//            int id = cursor.getColumnIndex("id");
-//            String friendname = cursor.getString(cursor.getColumnIndex("friendname"));
-//            String friendimg = cursor.getString(cursor.getColumnIndex("friendimg"));
-//            String friendcontent = cursor.getString(cursor.getColumnIndex("friendcontent"));
-//            data = new BeanFriend(id,friendname,friendimg, friendcontent);
-//            datas.add(data);
-//        }
-//        cursor.close();
-//        return datas;
-//    }
+    private void initFriends() {
+        beanFriendList = queryAllsocialContent();
+        for (BeanFriend d : beanFriendList) {
+            if (d != null) {
+                id.add(d.getId());
+                friendname.add(d.getFriendname());
+                friendnickname.add(d.getFriendnickname());
+                friendimg.add(d.getFriendimg());
+                friendcontent.add(d.getFriendcontent());
+                friendcontentimg.add(d.getFriendcontentimg());
+            }
+        }
+    }
+    public ArrayList<BeanFriend> queryAllsocialContent() {
+        ArrayList<BeanFriend> datas = new ArrayList<>();
+        Cursor cursor = db.query("friend", null, null, null, null, null, null);
+        while (cursor.moveToNext()) {
+            BeanFriend data = null;
+            int id = cursor.getColumnIndex("id");
+            String friendname = cursor.getString(cursor.getColumnIndex("friendname"));
+            String friendnickname = cursor.getString(cursor.getColumnIndex("friendnickname"));
+            String friendimg = cursor.getString(cursor.getColumnIndex("friendimg"));
+            String friendcontent = cursor.getString(cursor.getColumnIndex("friendcontent"));
+            String friendcontentimg = cursor.getString(cursor.getColumnIndex("friendcontentimg"));
+            data = new BeanFriend(id,friendname,friendnickname,friendimg, friendcontent,friendcontentimg);
+            datas.add(data);
+        }
+        cursor.close();
+        return datas;
+    }
 
 
     //初始化宠物列表数据
     private void initTabhost() {
-        final TabHost tabHost = findViewById(R.id.main);
+        tabHost = findViewById(R.id.main);
         tabHost.setup();
 
         final TabHost.TabSpec tabSpec1 = tabHost.newTabSpec("tab1").setIndicator("首页").setContent(R.id.tab01);

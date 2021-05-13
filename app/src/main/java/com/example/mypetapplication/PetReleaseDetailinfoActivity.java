@@ -42,7 +42,6 @@ public class PetReleaseDetailinfoActivity extends AppCompatActivity {
         pet_detail_yimiao=findViewById(R.id.pet_detail_yimiao);
         Intent intent = this.getIntent();
         final String pet_id = intent.getStringExtra(PetReleaseActivity.PET_ID2);
-        Toast.makeText(PetReleaseDetailinfoActivity.this,pet_id,Toast.LENGTH_SHORT).show();
         final String pet_img = intent.getStringExtra(PetReleaseActivity.PET_IMG2);
         final String pet_title = intent.getStringExtra(PetReleaseActivity.PET_TITLE2);
         final String pet_topic = intent.getStringExtra(PetReleaseActivity.PET_TOPIC2);
@@ -87,7 +86,10 @@ public class PetReleaseDetailinfoActivity extends AppCompatActivity {
             public void onClick(View v) {
                 petdelete(pet_title);
                 Toast.makeText(PetReleaseDetailinfoActivity.this, "删除成功", Toast.LENGTH_SHORT).show();
-                PetReleaseDetailinfoActivity.this.finish();
+                Intent intent = new Intent(PetReleaseDetailinfoActivity.this, PetReleaseActivity.class);
+                startActivity(intent);
+                PetReleaseActivity.instance1.finish();
+                finish();
             }
         });
 
