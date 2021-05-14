@@ -190,18 +190,18 @@ public class MineEditActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (data != null) {
             switch (requestCode) {
-                case 1:// 两种方式 获取拍好的图片
-                    if (data.getData() != null || data.getExtras() != null) { // 防止没有返回结果
+                case 1://打开相机
+                    if (data.getData() != null || data.getExtras() != null) {
                         Uri uri = data.getData();
                         if (uri != null) {
-                            this.photo = BitmapFactory.decodeFile(uri.getPath()); // 拿到图片
+                            this.photo = BitmapFactory.decodeFile(uri.getPath());
                         }
                         if (photo == null) {
                             Bundle bundle = data.getExtras();
                             if (bundle != null) {
                                 photo = (Bitmap) bundle.get("data");
                                 FileOutputStream fileOutputStream = null;
-                                try {// 获取 SD 卡根目录 生成图片并
+                                try {
                                     String saveDir = Environment
                                             .getExternalStorageDirectory()
                                             + "/zyy_Photos";// 新建目录
@@ -236,8 +236,7 @@ public class MineEditActivity extends AppCompatActivity {
                         }
                     }
                     break;
-                case 2: {//打开相册并选择照片，这个方式选择单张
-                    // 获取返回的数据，这里是android自定义的Uri地址
+                case 2: {//打开相册并选择照片
                     Uri selectedImage = data.getData();
                     String[] filePathColumn = { MediaStore.Images.Media.DATA };// 获取选择照片的数据视图
                     Cursor cursor = getContentResolver().query(selectedImage,

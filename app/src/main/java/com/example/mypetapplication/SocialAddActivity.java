@@ -172,6 +172,9 @@ public class SocialAddActivity extends AppCompatActivity {
         contentValues.put("friendname",username1);
         contentValues.put("friendcontent",social_think.getText().toString());
         contentValues.put("friendcontentimg",friend_content_img);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = new Date(System.currentTimeMillis());
+        contentValues.put("frienddate",simpleDateFormat.format(date));
         db.insert("friend",null,contentValues);
     }
     //初始化用户数据

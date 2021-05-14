@@ -84,7 +84,7 @@ public class PetReleaseDetailinfoActivity extends AppCompatActivity {
         pet_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                petdelete(pet_title);
+                petdelete(pet_id);
                 Toast.makeText(PetReleaseDetailinfoActivity.this, "删除成功", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(PetReleaseDetailinfoActivity.this, PetReleaseActivity.class);
                 startActivity(intent);
@@ -94,10 +94,10 @@ public class PetReleaseDetailinfoActivity extends AppCompatActivity {
         });
 
     }
-    private void petdelete(String pettitle){
+    private void petdelete(String petid){
         MyDatabaseHelper helper = new MyDatabaseHelper(this, "petdata", null,1);
         SQLiteDatabase db=helper.getWritableDatabase();
-        db.delete("petsdb","pettitle=?",new String[]{pettitle});
+        db.delete("petsdb","id=?",new String[]{petid});
         db.close();
     }
 }

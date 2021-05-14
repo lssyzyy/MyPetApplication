@@ -51,6 +51,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
 import java.io.ByteArrayOutputStream;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -110,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> friendimg = new ArrayList<String>();
     ArrayList<String> friendcontent = new ArrayList<String>();
     ArrayList<String> friendcontentimg = new ArrayList<String>();
+    ArrayList<String> frienddate = new ArrayList<String>();
 
 
     @Override
@@ -317,10 +319,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
         socialhelper = new MyFrienddataHelper(this, "frienddata", null, 1);
         db = socialhelper.getWritableDatabase();
-        initFriends();
-
+        try {
+            initFriends();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         ListView social_list = findViewById(R.id.social_list);
         Collections.reverse(beanFriendList);
         adapter = new FriendAdapter(this, R.layout.social_item, beanFriendList);
@@ -332,6 +338,8 @@ public class MainActivity extends AppCompatActivity {
                 nickname3=userlist.get(i).getNickname();
             }
         }
+
+
 
         Button socialadd=findViewById(R.id.social_add);
         socialadd.setOnClickListener(new View.OnClickListener() {
@@ -422,7 +430,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //初始化宠圈数据
-    private void initFriends() {
+    private void initFriends() throws ParseException {
         beanFriendList = queryAllsocialContent();
         for (BeanFriend d : beanFriendList) {
             if (d != null) {
@@ -432,10 +440,11 @@ public class MainActivity extends AppCompatActivity {
                 friendimg.add(d.getFriendimg());
                 friendcontent.add(d.getFriendcontent());
                 friendcontentimg.add(d.getFriendcontentimg());
+                frienddate.add(d.getFrienddate());
             }
         }
     }
-    public ArrayList<BeanFriend> queryAllsocialContent() {
+    public ArrayList<BeanFriend> queryAllsocialContent() throws ParseException {
         ArrayList<BeanFriend> datas = new ArrayList<>();
         Cursor cursor = db.query("friend", null, null, null, null, null, null);
         while (cursor.moveToNext()) {
@@ -446,14 +455,13 @@ public class MainActivity extends AppCompatActivity {
             String friendimg = cursor.getString(cursor.getColumnIndex("friendimg"));
             String friendcontent = cursor.getString(cursor.getColumnIndex("friendcontent"));
             String friendcontentimg = cursor.getString(cursor.getColumnIndex("friendcontentimg"));
-            data = new BeanFriend(id,friendname,friendnickname,friendimg, friendcontent,friendcontentimg);
+            String frienddate = cursor.getString(cursor.getColumnIndex("frienddate"));
+            data = new BeanFriend(id,friendname,friendnickname,friendimg, friendcontent,friendcontentimg,frienddate);
             datas.add(data);
         }
         cursor.close();
         return datas;
     }
-
-
     //初始化宠物列表数据
     private void initTabhost() {
         tabHost = findViewById(R.id.main);
@@ -536,7 +544,6 @@ public class MainActivity extends AppCompatActivity {
         }
         return false;
     }
-
     //bitmap转成string
     public static String convertIconToString(Bitmap bitmap) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();// outputstream

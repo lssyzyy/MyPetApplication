@@ -7,15 +7,17 @@ public class BeanFriend {
     private String friendimg;
     private String friendcontent;
     private String friendcontentimg;
+    private String frienddate;
 
     public BeanFriend(){};
-    public BeanFriend(int id, String friendname,String friendnickname, String friendimg, String friendcontent,String friendcontentimg){
+    public BeanFriend(int id, String friendname,String friendnickname, String friendimg, String friendcontent,String friendcontentimg,String frienddate){
         this.id=id;
         this.friendname=friendname;
         this.friendnickname=friendnickname;
         this.friendimg=friendimg;
         this.friendcontent=friendcontent;
         this.friendcontentimg=friendcontentimg;
+        this.frienddate=frienddate;
     }
 
     public int getId() {
@@ -64,5 +66,13 @@ public class BeanFriend {
 
     public void setFriendcontentimg(String friendcontentimg) {
         this.friendcontentimg = friendcontentimg;
+    }
+
+    public String getFrienddate() {
+        return frienddate;
+    }
+
+    public void setFrienddate(String frienddate) {
+        this.frienddate = frienddate;
     }
 }

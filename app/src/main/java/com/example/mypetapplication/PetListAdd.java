@@ -153,9 +153,9 @@ public class PetListAdd extends AppCompatActivity {
             public void onClick(View view) {
                 if(money.getText().toString().length()==0||title.getText().toString().length()==0||content.getText().toString().length()==0||name.getText().toString().length()==0){
                     Toast.makeText(PetListAdd.this,"文本框不得有空",Toast.LENGTH_SHORT).show();
-                }else if(imageview.getDrawable().getCurrent().getConstantState()==null){
+                }else if(petdetailimg==null){
                     Toast.makeText(PetListAdd.this,"图片不能为空",Toast.LENGTH_SHORT).show();
-                }else if(money.getText().toString().length()!=0&&title.getText().toString().length()!=0&&content.getText().toString().length()!=0&&name.getText().toString().length()!=0){
+                }else if(money.getText().toString().length()!=0&&title.getText().toString().length()!=0&&content.getText().toString().length()!=0&&name.getText().toString().length()!=0&&petdetailimg!=null){
                     rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                         @Override
                         public void onCheckedChanged(RadioGroup group, int checkedId) {

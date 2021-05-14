@@ -19,7 +19,8 @@ public class MyFrienddataHelper extends SQLiteOpenHelper {
                 "friendnickname TEXT," +
                 "friendimg varchar(10000)," +
                 "friendcontent TEXT," +
-                "friendcontentimg varchar(10000))");
+                "friendcontentimg varchar(10000)," +
+                "frienddate TEXT)");
     }
 
     @Override
