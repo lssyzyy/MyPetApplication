@@ -73,7 +73,7 @@ public class PetAdoptActivity extends AppCompatActivity {
         Cursor cursor = db.query("petsadopt", null, "petusername=?", new String[]{petusername1}, null, null, null);
         while (cursor.moveToNext()) {
             BeanPet data = null;
-            int petid = cursor.getColumnIndex("id");
+            int petid = cursor.getInt(cursor.getColumnIndex("id"));
             String petimg = cursor.getString(cursor.getColumnIndex("petimg"));
             String pettitle = cursor.getString(cursor.getColumnIndex("pettitle"));
             String pettopic = cursor.getString(cursor.getColumnIndex("pettopic"));

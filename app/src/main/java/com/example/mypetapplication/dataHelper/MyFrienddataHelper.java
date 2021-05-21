@@ -21,10 +21,17 @@ public class MyFrienddataHelper extends SQLiteOpenHelper {
                 "friendcontent TEXT," +
                 "friendcontentimg varchar(10000)," +
                 "frienddate TEXT)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS friendcomment" +
+                "(id integer primary key, " +
+                "friendid integer," +
+                "friendcommentnickname TEXT," +
+                "friendcommentcontent TEXT," +
+                "FOREIGN KEY(friendid) REFERENCES friend(id))");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("drop table if exists friend");
+        db.execSQL("drop table if exists friendcomment");
     }
 }
